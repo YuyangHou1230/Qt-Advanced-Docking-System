@@ -2,7 +2,7 @@ ADS_OUT_ROOT = $${OUT_PWD}/..
 CONFIG += c++14
 CONFIG += debug_and_release
 TARGET = $$qtLibraryTarget(qtadvanceddocking)
-DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DEPRECATED_WARNINGS ADS_DEBUG_PRINT
 TEMPLATE = lib
 DESTDIR = $${ADS_OUT_ROOT}/lib
 QT += core gui widgets
@@ -52,7 +52,9 @@ HEADERS += \
     AutoHideSideBar.h \
     AutoHideTab.h \
     PushButton.h \
-    ResizeHandle.h
+    ResizeHandle.h \
+    titlebar.h \
+    customfloatingwidget.h
 
 
 SOURCES += \
@@ -77,7 +79,9 @@ SOURCES += \
     AutoHideSideBar.cpp \
     AutoHideTab.cpp \
     PushButton.cpp \
-    ResizeHandle.cpp
+    ResizeHandle.cpp \
+    titlebar.cpp \
+    customfloatingwidget.cpp
 
 
 unix:!macx {
@@ -97,3 +101,6 @@ target.path=$$PREFIX/lib
 INSTALLS += headers target
 
 DISTFILES +=
+
+FORMS += \
+    titlebar.ui

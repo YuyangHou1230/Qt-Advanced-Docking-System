@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ads::CDockManager::setConfigFlag(ads::CDockManager::UserCustomFloatingTitle);
     // Create the dock manager. Because the parent parameter is a QMainWindow
     // the dock manager registers itself as the central widget.
 	m_DockManager = new ads::CDockManager(this);

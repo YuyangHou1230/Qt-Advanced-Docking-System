@@ -38,18 +38,11 @@
 
 #include "DockAreaWidget.h"
 #include "DockAreaTitleBar.h"
-#include "DockContainerWidget.h"
-#include "AutoHideSideBar.h"
-#include "DockManager.h"
-#include "DockAreaTabBar.h"
 
 #include <iostream>
 
 namespace ads
 {
-static const int AutoHideAreaWidth = 32;
-static const int AutoHideAreaMouseZone = 8;
-static const int InvalidTabIndex = -2;
 
 /**
  * Private data class of CDockOverlay
@@ -64,23 +57,11 @@ struct DockOverlayPrivate
 	bool DropPreviewEnabled = true;
 	CDockOverlay::eMode Mode = CDockOverlay::ModeDockAreaOverlay;
 	QRect DropAreaRect;
-	int TabIndex = InvalidTabIndex;
 
 	/**
 	 * Private data constructor
 	 */
 	DockOverlayPrivate(CDockOverlay* _public) : _this(_public) {}
-
-	/**
-	 * Returns the overlay width / height depending on the visibility
-	 * of the sidebar
-	 */
-	int sideBarOverlaySize(SideBarLocation sideBarLocation);
-
-	/**
-	 * The area where the mouse is considered in the sidebar
-	 */
-	int sideBarMouseZone(SideBarLocation sideBarLocation);
 };
 
 /**
@@ -174,20 +155,8 @@ struct DockOverlayCrossPrivate
 		QLabel* l = new QLabel();
 		l->setObjectName("DockWidgetAreaLabel");
 
-        qreal metric = dropIndicatiorWidth(l);
-		QSizeF size(metric, metric);
-		if (internal::isSideBarArea(DockWidgetArea))
-        {
-			auto SideBarLocation = internal::toSideBarLocation(DockWidgetArea);
-			if (internal::isHorizontalSideBarLocation(SideBarLocation))
-			{
-				size.setHeight(size.height() / 2);
-			}
-			else
-			{
-				size.setWidth(size.width() / 2);
-			}
-        }
+        const qreal metric = dropIndicatiorWidth(l);
+		const QSizeF size(metric, metric);
 
 		l->setPixmap(createHighDpiDropIndicatorPixmap(size, DockWidgetArea, Mode));
 		l->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
@@ -213,11 +182,6 @@ struct DockOverlayCrossPrivate
 	{
 		QColor borderColor = iconColor(CDockOverlayCross::FrameColor);
 		QColor backgroundColor = iconColor(CDockOverlayCross::WindowBackgroundColor);
-		QColor overlayColor = iconColor(CDockOverlayCross::OverlayColor);
-		if (overlayColor.alpha() == 255)
-		{
-			overlayColor.setAlpha(64);
-		}
 
 #if QT_VERSION >= 0x050600
 		double DevicePixelRatio = _this->window()->devicePixelRatioF();
@@ -275,22 +239,22 @@ struct DockOverlayCrossPrivate
 		}
 
 		QSizeF baseSize = baseRect.size();
-		bool IsOuterContainerArea = (CDockOverlay::ModeContainerOverlay == Mode)
-			&& (DockWidgetArea != CenterDockWidgetArea)
-			&& !internal::isSideBarArea(DockWidgetArea);
-
-		if (IsOuterContainerArea)
+		if (CDockOverlay::ModeContainerOverlay == Mode && DockWidgetArea != CenterDockWidgetArea)
 		{
 			baseRect = areaRect;
 		}
 
 		p.fillRect(baseRect, backgroundColor);
-
 		if (areaRect.isValid())
 		{
 			pen = p.pen();
 			pen.setColor(borderColor);
-			p.setBrush(overlayColor);
+			QColor Color = iconColor(CDockOverlayCross::OverlayColor);
+			if (Color.alpha() == 255)
+			{
+				Color.setAlpha(64);
+			}
+			p.setBrush(Color);
 			p.setPen(Qt::NoPen);
 			p.drawRect(areaRect);
 
@@ -302,7 +266,6 @@ struct DockOverlayCrossPrivate
 			p.drawLine(areaLine);
 		}
 		p.restore();
-
 
 		p.save();
 		// Draw outer border
@@ -319,9 +282,8 @@ struct DockOverlayCrossPrivate
 		p.drawRect(FrameRect);
 		p.restore();
 
-
 		// Draw arrow for outer container drop indicators
-		if (IsOuterContainerArea)
+		if (CDockOverlay::ModeContainerOverlay == Mode && DockWidgetArea != CenterDockWidgetArea)
 		{
 			QRectF ArrowRect;
 			ArrowRect.setSize(baseSize);
@@ -365,38 +327,6 @@ struct DockOverlayCrossPrivate
 
 
 //============================================================================
-int DockOverlayPrivate::sideBarOverlaySize(SideBarLocation sideBarLocation)
-{
-	auto Container = qobject_cast<CDockContainerWidget*>(TargetWidget.data());
-	auto SideBar = Container->autoHideSideBar(sideBarLocation);
-	if (!SideBar || !SideBar->isVisibleTo(Container))
-	{
-		return AutoHideAreaWidth;
-	}
-	else
-	{
-		return (SideBar->orientation() == Qt::Horizontal) ? SideBar->height() : SideBar->width();
-	}
-}
-
-
-//============================================================================
-int DockOverlayPrivate::sideBarMouseZone(SideBarLocation sideBarLocation)
-{
-	auto Container = qobject_cast<CDockContainerWidget*>(TargetWidget.data());
-	auto SideBar = Container->autoHideSideBar(sideBarLocation);
-	if (!SideBar || !SideBar->isVisibleTo(Container))
-	{
-		return AutoHideAreaMouseZone;
-	}
-	else
-	{
-		return (SideBar->orientation() == Qt::Horizontal) ? SideBar->height() : SideBar->width();
-	}
-}
-
-
-//============================================================================
 CDockOverlay::CDockOverlay(QWidget* parent, eMode Mode) :
 	QFrame(parent),
 	d(new DockOverlayPrivate(this))
@@ -429,23 +359,9 @@ CDockOverlay::~CDockOverlay()
 void CDockOverlay::setAllowedAreas(DockWidgetAreas areas)
 {
 	if (areas == d->AllowedAreas)
-	{
 		return;
-	}
 	d->AllowedAreas = areas;
 	d->Cross->reset();
-}
-
-
-//============================================================================
-void CDockOverlay::setAllowedArea(DockWidgetArea area, bool Enable)
-{
-	auto AreasOld = d->AllowedAreas;
-	d->AllowedAreas.setFlag(area, Enable);
-	if (AreasOld != d->AllowedAreas)
-	{
-		d->Cross->reset();
-	}
 }
 
 
@@ -459,79 +375,26 @@ DockWidgetAreas CDockOverlay::allowedAreas() const
 //============================================================================
 DockWidgetArea CDockOverlay::dropAreaUnderCursor() const
 {
-	d->TabIndex = InvalidTabIndex;
-	if (!d->TargetWidget)
-	{
-		return InvalidDockWidgetArea;
-	}
-
 	DockWidgetArea Result = d->Cross->cursorLocation();
 	if (Result != InvalidDockWidgetArea)
 	{
 		return Result;
 	}
 
-	auto CursorPos = QCursor::pos();
-	auto DockArea = qobject_cast<CDockAreaWidget*>(d->TargetWidget.data());
-	if (!DockArea && CDockManager::autoHideConfigFlags().testFlag(CDockManager::AutoHideFeatureEnabled))
-	{
-		auto Rect = rect();
-		const QPoint pos = mapFromGlobal(QCursor::pos());
-		if ((pos.x() < d->sideBarMouseZone(SideBarLeft))
-		  && d->AllowedAreas.testFlag(LeftAutoHideArea))
-		{
-			Result = LeftAutoHideArea;
-		}
-		else if (pos.x() > (Rect.width() - d->sideBarMouseZone(SideBarRight))
-			  && d->AllowedAreas.testFlag(RightAutoHideArea))
-		{
-			Result = RightAutoHideArea;
-		}
-		else if (pos.y() < d->sideBarMouseZone(SideBarTop)
-			&& d->AllowedAreas.testFlag(TopAutoHideArea))
-		{
-			Result = TopAutoHideArea;
-		}
-		else if (pos.y() > (Rect.height() - d->sideBarMouseZone(SideBarBottom))
-			&& d->AllowedAreas.testFlag(BottomAutoHideArea))
-		{
-			Result = BottomAutoHideArea;
-		}
-
-		auto SideBarLocation = ads::internal::toSideBarLocation(Result);
-		if (SideBarLocation != SideBarNone)
-		{
-			auto Container = qobject_cast<CDockContainerWidget*>(d->TargetWidget.data());
-			auto SideBar = Container->autoHideSideBar(SideBarLocation);
-			if (SideBar->isVisible())
-			{
-				d->TabIndex = SideBar->tabInsertIndexAt(SideBar->mapFromGlobal(CursorPos));
-			}
-		}
-		return Result;
-	}
-	else if (!DockArea)
+	CDockAreaWidget* DockArea = qobject_cast<CDockAreaWidget*>(d->TargetWidget.data());
+	if (!DockArea)
 	{
 		return Result;
 	}
 
 	if (DockArea->allowedAreas().testFlag(CenterDockWidgetArea)
 	 && !DockArea->titleBar()->isHidden()
-	 && DockArea->titleBarGeometry().contains(DockArea->mapFromGlobal(CursorPos)))
+	 && DockArea->titleBarGeometry().contains(DockArea->mapFromGlobal(QCursor::pos())))
 	{
-		auto TabBar = DockArea->titleBar()->tabBar();
-		d->TabIndex = TabBar->tabInsertIndexAt(TabBar->mapFromGlobal(CursorPos));
 		return CenterDockWidgetArea;
 	}
 
 	return Result;
-}
-
-
-//============================================================================
-int CDockOverlay::tabIndexUnderCursor() const
-{
-	return d->TabIndex;
 }
 
 
@@ -608,7 +471,6 @@ bool CDockOverlay::dropPreviewEnabled() const
 void CDockOverlay::paintEvent(QPaintEvent* event)
 {
 	Q_UNUSED(event);
-
 	// Draw rect based on location
 	if (!d->DropPreviewEnabled)
 	{
@@ -628,13 +490,8 @@ void CDockOverlay::paintEvent(QPaintEvent* event)
 	case BottomDockWidgetArea: r.setY(r.height() * (1 - 1 / Factor)); break;
 	case LeftDockWidgetArea: r.setWidth(r.width() / Factor); break;
 	case CenterDockWidgetArea: r = rect();break;
-	case LeftAutoHideArea: r.setWidth(d->sideBarOverlaySize(SideBarLeft)); break;
-	case RightAutoHideArea: r.setX(r.width() - d->sideBarOverlaySize(SideBarRight)); break;
-	case TopAutoHideArea: r.setHeight(d->sideBarOverlaySize(SideBarTop)); break;
-	case BottomAutoHideArea: r.setY(r.height() - d->sideBarOverlaySize(SideBarBottom)); break;
 	default: return;
 	}
-
 	QPainter painter(this);
     QColor Color = palette().color(QPalette::Active, QPalette::Highlight);
     QPen Pen = painter.pen();
@@ -770,7 +627,6 @@ void CDockOverlayCross::setupOverlayCross(CDockOverlay::eMode Mode)
 	areaWidgets.insert(BottomDockWidgetArea, d->createDropIndicatorWidget(BottomDockWidgetArea, Mode));
 	areaWidgets.insert(LeftDockWidgetArea, d->createDropIndicatorWidget(LeftDockWidgetArea, Mode));
 	areaWidgets.insert(CenterDockWidgetArea, d->createDropIndicatorWidget(CenterDockWidgetArea, Mode));
-
 #if QT_VERSION >= 0x050600
 	d->LastDevicePixelRatio = devicePixelRatioF();
 #else

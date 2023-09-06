@@ -213,12 +213,6 @@ void DockWidgetPrivate::hideDockWidget()
 
 	if (Features.testFlag(CDockWidget::DeleteContentOnClose))
 	{
-		if (ScrollArea)
-		{
-			ScrollArea->takeWidget();
-			delete ScrollArea;
-			ScrollArea = nullptr;
-		}
 		Widget->deleteLater();
 		Widget = nullptr;
 	}
@@ -558,13 +552,6 @@ void CDockWidget::setSideTabWidget(CAutoHideTab* SideTab) const
 bool CDockWidget::isAutoHide() const
 {
 	return !d->SideTabWidget.isNull();
-}
-
-
-//============================================================================
-SideBarLocation CDockWidget::autoHideLocation() const
-{
-	return isAutoHide() ? autoHideDockContainer()->sideBarLocation() : SideBarNone;
 }
 
 
@@ -1034,15 +1021,7 @@ void CDockWidget::setFloating()
 	{
 		return;
 	}
-
-	if (this->isAutoHide())
-	{
-		dockAreaWidget()->setFloating();
-	}
-	else
-	{
-		d->TabWidget->detachDockWidget();
-	}
+	d->TabWidget->detachDockWidget();
 }
 
 
@@ -1062,22 +1041,6 @@ void CDockWidget::deleteDockWidget()
 void CDockWidget::closeDockWidget()
 {
 	closeDockWidgetInternal(true);
-}
-
-
-
-//============================================================================
-void CDockWidget::requestCloseDockWidget()
-{
-    if (features().testFlag(CDockWidget::DockWidgetDeleteOnClose)
-     || features().testFlag(CDockWidget::CustomCloseHandling))
-    {
-    	closeDockWidgetInternal(false);
-    }
-    else
-    {
-    	toggleView(false);
-    }
 }
 
 
@@ -1227,7 +1190,7 @@ void CDockWidget::raise()
 
 
 //============================================================================
-void CDockWidget::setAutoHide(bool Enable, SideBarLocation Location, int TabIndex)
+void CDockWidget::setAutoHide(bool Enable, SideBarLocation Location)
 {
 	if (!CDockManager::testAutoHideConfigFlag(CDockManager::AutoHideFeatureEnabled))
 	{
@@ -1235,25 +1198,20 @@ void CDockWidget::setAutoHide(bool Enable, SideBarLocation Location, int TabInde
 	}
 
 	// Do nothing if nothing changes
-	if (Enable == isAutoHide() && Location == autoHideLocation())
+	if (Enable == isAutoHide())
 	{
 		return;
 	}
 
 	auto DockArea = dockAreaWidget();
-
 	if (!Enable)
 	{
 		DockArea->setAutoHide(false);
 	}
-	else if (isAutoHide())
-	{
-		autoHideDockContainer()->moveToNewSideBarLocation(Location);
-	}
 	else
 	{
 		auto area = (SideBarNone == Location) ? DockArea->calculateSideTabBarArea() : Location;
-		dockContainer()->createAndSetupAutoHideContainer(area, this, TabIndex);
+		dockContainer()->createAndSetupAutoHideContainer(area, this);
 	}
 }
 

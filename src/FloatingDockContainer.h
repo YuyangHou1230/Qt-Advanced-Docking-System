@@ -95,6 +95,7 @@ public:
 };
 
 
+
 /**
  * This implements a floating widget that is a dock container that accepts
  * docking of dock widgets like the main window and that can be docked into
@@ -104,7 +105,8 @@ public:
 class ADS_EXPORT CFloatingDockContainer : public tFloatingWidgetBase, public IFloatingWidget
 {
 	Q_OBJECT
-private:
+
+protected:
 	FloatingDockContainerPrivate* d; ///< private data (pimpl)
 	friend struct FloatingDockContainerPrivate;
 	friend class CDockManager;
@@ -118,6 +120,15 @@ private:
 	friend class CDockAreaWidget;
     friend class CFloatingWidgetTitleBar;
 
+public:
+    void onMouseLeftPress();
+    void onMouseLeftRelease();
+    void onMouseMoving();
+
+    virtual void reflectWindowsTitle(QString text);
+
+signals:
+    void sigTitleUpdate(QString text);
 private Q_SLOTS:
 	void onDockAreasAddedOrRemoved();
 	void onDockAreaCurrentChanged(int Index);

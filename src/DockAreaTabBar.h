@@ -114,19 +114,6 @@ public:
 	CDockWidgetTab* tab(int Index) const;
 
 	/**
-	 * Returns the tab at the given position.
-	 * Returns -1 if the position is left of the first tab and count() if the
-	 * position is right of the last tab. Returns -2 to indicate an invalid
-	 * value.
-	 */
-	int tabAt(const QPoint& Pos) const;
-
-	/**
-	 * Returns the tab insertion index for the given mouse cursor position
-	 */
-	int tabInsertIndexAt(const QPoint& Pos) const;
-
-	/**
 	 * Filters the tab widget events
 	 */
 	virtual bool eventFilter(QObject *watched, QEvent *event) override;
@@ -141,7 +128,7 @@ public:
 	/**
 	 * Overrides the minimumSizeHint() function of QScrollArea
 	 * The minimumSizeHint() is bigger than the sizeHint () for the scroll
-	 * area because even if the scrollbars are invisible, the required space
+	 * area because even if the scrollbars are invisible, the required speace
 	 * is reserved in the minimumSizeHint(). This override simply returns
 	 * sizeHint();
 	 */
