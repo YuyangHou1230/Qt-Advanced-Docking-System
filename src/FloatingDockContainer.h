@@ -124,6 +124,7 @@ public:
     void onMouseLeftPress();
     void onMouseLeftRelease();
     void onMouseMoving();
+    void onCloseFloating();
 
     virtual void reflectWindowsTitle(QString text);
 

@@ -117,7 +117,8 @@ protected:
 	 * Drop floating widget into the container
 	 */
 	void dropFloatingWidget(CFloatingDockContainer* FloatingWidget, const QPoint& TargetPos);
-
+    //使视图回到dockWidget中心
+    void dropFloatingWidgetToCenter(CFloatingDockContainer* FloatingWidget, const QPoint& TargetPos);
 	/**
 	 * Drop a dock area or a dock widget given in widget parameter.
 	 * If the TargetAreaWidget is a nullptr, then the DropArea indicates

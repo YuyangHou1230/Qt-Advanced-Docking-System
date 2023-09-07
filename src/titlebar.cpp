@@ -100,6 +100,7 @@ void TableTitleBar::paintEvent(QPaintEvent *event)
 
 void TableTitleBar::on_btnClose_clicked()
 {
-    if(mp_ParentWidget->isWindow())
-        mp_ParentWidget->close();
+    emit closeFloating(ui->TitleLabel->text());
+//    if(mp_ParentWidget->isWindow())
+//        mp_ParentWidget->close();
 }

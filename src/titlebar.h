@@ -40,6 +40,9 @@ signals:
     void mouseLeftPress();
     void mouseLeftRelease();
     void mouseMoving();
+
+    void closeFloating(QString widgetName);
+
 private:
     Ui::TableTitleBar *ui;
     QWidget *mp_ParentWidget;//标题栏所属的窗口对象

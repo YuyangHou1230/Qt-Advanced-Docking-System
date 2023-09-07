@@ -47,6 +47,7 @@ void CustomFloatingWidget::init()
     connect(titleBar, &TableTitleBar::mouseLeftPress, this, &CustomFloatingWidget::onMouseLeftPress);
     connect(titleBar, &TableTitleBar::mouseMoving, this, &CustomFloatingWidget::onMouseMoving);
     connect(titleBar, &TableTitleBar::mouseLeftRelease, this, &CustomFloatingWidget::onMouseLeftRelease);
+    connect(titleBar,&TableTitleBar::closeFloating,this,&CustomFloatingWidget::onCloseFloating);
 
     titleBar->SetDialogText(windowTitle());
 }

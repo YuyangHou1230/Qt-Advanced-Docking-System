@@ -4,7 +4,7 @@
 
 #include <QLabel>
 #include <QTimer>
-
+using namespace ads;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -27,13 +27,31 @@ MainWindow::MainWindow(QWidget *parent) :
 	// as the dock widget content
 	ads::CDockWidget* DockWidget = new ads::CDockWidget("Label 1");
 	DockWidget->setWidget(l);
+    ui->menuView->addAction(DockWidget->toggleViewAction());
+    m_DockManager->addDockWidgetTab(ads::TopDockWidgetArea, DockWidget);
 
+    DockWidget = new ads::CDockWidget("Label 2");
+    l = new QLabel();
+    l->setWordWrap(true);
+    l->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    l->setText("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ");
+    DockWidget->setWidget(l);
+    ui->menuView->addAction(DockWidget->toggleViewAction());
+    m_DockManager->addDockWidgetTab(ads::TopDockWidgetArea, DockWidget);
+
+    DockWidget = new ads::CDockWidget("Label 3");
+    l = new QLabel();
+    l->setWordWrap(true);
+    l->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    l->setText("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ");
+    DockWidget->setWidget(l);
 	// Add the toggleViewAction of the dock widget to the menu to give
 	// the user the possibility to show the dock widget if it has been closed
-	ui->menuView->addAction(DockWidget->toggleViewAction());
-
+    ui->menuView->addAction(DockWidget->toggleViewAction());
+    m_DockManager->addDockWidgetTab(ads::TopDockWidgetArea, DockWidget);
 	// Add the dock widget to the top dock widget area
-	m_DockManager->addDockWidget(ads::TopDockWidgetArea, DockWidget);
+
+
 }
 
 MainWindow::~MainWindow()

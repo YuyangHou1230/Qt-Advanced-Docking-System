@@ -222,6 +222,7 @@ public:
 	 */
 	DockWidgetArea cursorLocation() const;
 
+    DockWidgetArea cursorLocation(const QPoint posi) const;
 	/**
 	 * Sets up the overlay cross for the given overlay mode
 	 */

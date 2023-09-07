@@ -376,6 +376,7 @@ DockWidgetAreas CDockOverlay::allowedAreas() const
 DockWidgetArea CDockOverlay::dropAreaUnderCursor() const
 {
 	DockWidgetArea Result = d->Cross->cursorLocation();
+
 	if (Result != InvalidDockWidgetArea)
 	{
 		return Result;
@@ -394,9 +395,8 @@ DockWidgetArea CDockOverlay::dropAreaUnderCursor() const
 		return CenterDockWidgetArea;
 	}
 
-	return Result;
+    return Result;
 }
-
 
 //============================================================================
 DockWidgetArea CDockOverlay::visibleDropAreaUnderCursor() const
@@ -736,6 +736,7 @@ void CDockOverlayCross::setAreaWidgets(const QHash<DockWidgetArea, QWidget*>& wi
 DockWidgetArea CDockOverlayCross::cursorLocation() const
 {
 	const QPoint pos = mapFromGlobal(QCursor::pos());
+
 	QHashIterator<DockWidgetArea, QWidget*> i(d->DropIndicatorWidgets);
 	while (i.hasNext())
 	{
@@ -745,10 +746,29 @@ DockWidgetArea CDockOverlayCross::cursorLocation() const
 			&& i.value()->isVisible()
 			&& i.value()->geometry().contains(pos))
 		{
+            qDebug()<<"pos = "<<pos<<"area = "<<i.key();
 			return i.key();
 		}
 	}
-	return InvalidDockWidgetArea;
+    return InvalidDockWidgetArea;
+}
+
+DockWidgetArea CDockOverlayCross::cursorLocation(const QPoint posi) const
+{
+    const QPoint pos = mapFromGlobal(posi);
+    QHashIterator<DockWidgetArea, QWidget*> i(d->DropIndicatorWidgets);
+    while (i.hasNext())
+    {
+        i.next();
+        if (d->DockOverlay->allowedAreas().testFlag(i.key())
+            && i.value()
+            && i.value()->isVisible()
+            && i.value()->geometry().contains(pos))
+        {
+            return i.key();
+        }
+    }
+    return InvalidDockWidgetArea;
 }
 
 

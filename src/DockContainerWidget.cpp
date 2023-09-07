@@ -1627,72 +1627,133 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
 	const QPoint& TargetPos)
 {
     ADS_PRINT("CDockContainerWidget::dropFloatingWidget");
-	CDockWidget* SingleDroppedDockWidget = FloatingWidget->topLevelDockWidget();
-	CDockWidget* SingleDockWidget = topLevelDockWidget();
-	CDockAreaWidget* DockArea = dockAreaAt(TargetPos);
-	auto dropArea = InvalidDockWidgetArea;
-	auto ContainerDropArea = d->DockManager->containerOverlay()->dropAreaUnderCursor();
-	bool Dropped = false;
+    CDockWidget* SingleDroppedDockWidget = FloatingWidget->topLevelDockWidget();
+    CDockWidget* SingleDockWidget = topLevelDockWidget();
+    CDockAreaWidget* DockArea = dockAreaAt(TargetPos);
+    auto dropArea = InvalidDockWidgetArea;
+    auto ContainerDropArea = d->DockManager->containerOverlay()->dropAreaUnderCursor();
+    bool Dropped = false;
 
-	if (DockArea)
-	{
-		auto dropOverlay = d->DockManager->dockAreaOverlay();
-		dropOverlay->setAllowedAreas(DockArea->allowedAreas());
-		dropArea = dropOverlay->showOverlay(DockArea);
-		if (ContainerDropArea != InvalidDockWidgetArea &&
-			ContainerDropArea != dropArea)
-		{
-			dropArea = InvalidDockWidgetArea;
-		}
+    if (DockArea)
+    {
+        auto dropOverlay = d->DockManager->dockAreaOverlay();
+        dropOverlay->setAllowedAreas(DockArea->allowedAreas());
+        dropArea = dropOverlay->showOverlay(DockArea);
+        if (ContainerDropArea != InvalidDockWidgetArea &&
+            ContainerDropArea != dropArea)
+        {
+            dropArea = InvalidDockWidgetArea;
+        }
 
-		if (dropArea != InvalidDockWidgetArea)
-		{
+        if (dropArea != InvalidDockWidgetArea)
+        {
             ADS_PRINT("Dock Area Drop Content: " << dropArea);
-			d->dropIntoSection(FloatingWidget, DockArea, dropArea);
-			Dropped = true;
-		}
-	}
+            d->dropIntoSection(FloatingWidget, DockArea, dropArea);
+            Dropped = true;
+        }
+    }
 
-	// mouse is over container
-	if (InvalidDockWidgetArea == dropArea)
-	{
-		dropArea = ContainerDropArea;
+    // mouse is over container
+    if (InvalidDockWidgetArea == dropArea)
+    {
+        dropArea = ContainerDropArea;
         ADS_PRINT("Container Drop Content: " << dropArea);
-		if (dropArea != InvalidDockWidgetArea)
-		{
-			d->dropIntoContainer(FloatingWidget, dropArea);
-			Dropped = true;
-		}
-	}
+        if (dropArea != InvalidDockWidgetArea)
+        {
+            d->dropIntoContainer(FloatingWidget, dropArea);
+            Dropped = true;
+        }
+    }
 
     // Remove the auto hide widgets from the FloatingWidget and insert
-	// them into this widget
-	for (auto AutohideWidget : FloatingWidget->dockContainer()->autoHideWidgets())
-	{
-		auto SideBar = sideTabBar(AutohideWidget->sideBarLocation());
-		SideBar->addAutoHideWidget(AutohideWidget);
-	}
+    // them into this widget
+    for (auto AutohideWidget : FloatingWidget->dockContainer()->autoHideWidgets())
+    {
+        auto SideBar = sideTabBar(AutohideWidget->sideBarLocation());
+        SideBar->addAutoHideWidget(AutohideWidget);
+    }
 
-	if (Dropped)
-	{ 
-		// Fix https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/issues/351
-		FloatingWidget->hideAndDeleteLater();
+    if (Dropped)
+    {
+        // Fix https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/issues/351
+        FloatingWidget->hideAndDeleteLater();
 
-		// If we dropped a floating widget with only one single dock widget, then we
-		// drop a top level widget that changes from floating to docked now
-		CDockWidget::emitTopLevelEventForWidget(SingleDroppedDockWidget, false);
+        // If we dropped a floating widget with only one single dock widget, then we
+        // drop a top level widget that changes from floating to docked now
+        CDockWidget::emitTopLevelEventForWidget(SingleDroppedDockWidget, false);
 
-		// If there was a top level widget before the drop, then it is not top
-		// level widget anymore
-		CDockWidget::emitTopLevelEventForWidget(SingleDockWidget, false);
-	}
+        // If there was a top level widget before the drop, then it is not top
+        // level widget anymore
+        CDockWidget::emitTopLevelEventForWidget(SingleDockWidget, false);
+    }
 
-	window()->activateWindow();
-	if (SingleDroppedDockWidget)
-	{
-		d->DockManager->notifyWidgetOrAreaRelocation(SingleDroppedDockWidget);
-	}
-	d->DockManager->notifyFloatingWidgetDrop(FloatingWidget);
+    window()->activateWindow();
+    if (SingleDroppedDockWidget)
+    {
+        d->DockManager->notifyWidgetOrAreaRelocation(SingleDroppedDockWidget);
+    }
+    d->DockManager->notifyFloatingWidgetDrop(FloatingWidget);
+}
+
+void CDockContainerWidget::dropFloatingWidgetToCenter(CFloatingDockContainer *FloatingWidget, const QPoint &TargetPos)
+{
+    ADS_PRINT("CDockContainerWidget::dropFloatingWidget");
+    CDockWidget* SingleDroppedDockWidget = FloatingWidget->topLevelDockWidget();
+    CDockWidget* SingleDockWidget = topLevelDockWidget();
+    CDockAreaWidget* DockArea = dockAreaAt(TargetPos);
+    auto dropArea = InvalidDockWidgetArea;
+    auto ContainerDropArea = CenterDockWidgetArea;
+    bool Dropped = false;
+    if (DockArea)
+    {
+        auto dropOverlay = d->DockManager->dockAreaOverlay();
+        dropOverlay->setAllowedAreas(DockArea->allowedAreas());
+        dropArea = CenterDockWidgetArea;//dropOverlay->showOverlay(DockArea);
+        ADS_PRINT("Dock Area Drop Content: " << dropArea);
+        d->dropIntoSection(FloatingWidget, DockArea, dropArea);
+        Dropped = true;
+    }
+
+    // mouse is over container
+    if (InvalidDockWidgetArea == dropArea)
+    {
+        dropArea = ContainerDropArea;
+        ADS_PRINT("Container Drop Content: " << dropArea);
+        if (dropArea != InvalidDockWidgetArea)
+        {
+            d->dropIntoContainer(FloatingWidget, dropArea);
+            Dropped = true;
+        }
+    }
+
+    // Remove the auto hide widgets from the FloatingWidget and insert
+    // them into this widget
+    for (auto AutohideWidget : FloatingWidget->dockContainer()->autoHideWidgets())
+    {
+        auto SideBar = sideTabBar(AutohideWidget->sideBarLocation());
+        SideBar->addAutoHideWidget(AutohideWidget);
+    }
+
+    if (Dropped)
+    {
+        // Fix https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/issues/351
+        FloatingWidget->hideAndDeleteLater();
+
+        // If we dropped a floating widget with only one single dock widget, then we
+        // drop a top level widget that changes from floating to docked now
+        CDockWidget::emitTopLevelEventForWidget(SingleDroppedDockWidget, false);
+
+        // If there was a top level widget before the drop, then it is not top
+        // level widget anymore
+        CDockWidget::emitTopLevelEventForWidget(SingleDockWidget, false);
+    }
+
+    window()->activateWindow();
+    if (SingleDroppedDockWidget)
+    {
+        d->DockManager->notifyWidgetOrAreaRelocation(SingleDroppedDockWidget);
+    }
+    d->DockManager->notifyFloatingWidgetDrop(FloatingWidget);
 }
 
 

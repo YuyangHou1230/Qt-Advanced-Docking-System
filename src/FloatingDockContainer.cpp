@@ -1069,6 +1069,18 @@ void CFloatingDockContainer::onMouseMoving()
     d->updateDropOverlays(QCursor::pos());
 }
 
+void CFloatingDockContainer::onCloseFloating()
+{
+    //!关闭浮窗后使视图回到dockWidget中心
+    QPoint p = d->DockManager->mapToGlobal(d->DockManager->geometry().center());
+    //计算d->DockAreas个数与位置。
+    d->updateDropOverlays(p);
+    d->DropContainer->dropFloatingWidgetToCenter(d->_this,p);
+    //隐藏Overlay视图
+   d->DockManager->containerOverlay()->hideOverlay();
+   d->DockManager->dockAreaOverlay()->hideOverlay();
+}
+
 void CFloatingDockContainer::reflectWindowsTitle(QString text)
 {
     Q_UNUSED(text)
