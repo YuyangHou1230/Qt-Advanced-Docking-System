@@ -28,13 +28,31 @@ public:
 
     virtual void reflectWindowsTitle(QString text) override;
 
+    //改变窗口大小
+    void turnView();
+
 private slots:
     void updateTitle(QString text);
 
 private:
     void init();
+    //鼠标相对窗体的位置
+    QPoint m_pos;
+    //仅记录第一次按下坐标(move也会触发press信号)
+    bool m_isMoving;
+    //上一次的宽度
+    QRect m_priSize;
 
     TableTitleBar* titleBar;
+
+protected:
+     virtual bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+
+     void mousePressEvent(QMouseEvent* e) override;
+     void mouseMoveEvent(QMouseEvent* e) override;
+
+     void enterEvent(QEvent *event) override;
+     void leaveEvent(QEvent *event) override;
 };
 
 

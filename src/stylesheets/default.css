@@ -61,17 +61,36 @@ ads--CTitleBarButton {
  * CDockWidgetTab and close button styling
  *****************************************************************************/
 ads--CDockWidgetTab {
-	background: palette(window);
+        /*background: palette(window);
 	border-color: palette(light);
 	border-style: solid;
 	border-width: 0 1px 0 0;
-	padding: 0 0px;
+        padding: 0 0px;*/
+        min-width: 100px;
+        min-height: 37px;
+        font-size: 14pt;
 }
 
 ads--CDockWidgetTab[activeTab="true"] {
-	background: qlineargradient(spread : pad, x1 : 0, y1 : 0, x2 : 0, y2 : 0.5, stop : 0
+        /*background: qlineargradient(spread : pad, x1 : 0, y1 : 0, x2 : 0, y2 : 0.5, stop : 0
 		palette(window), stop:1 palette(light));
-	/*background: palette(highlight);*/
+        background: palette(highlight);*/
+        background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,
+        stop:0 rgba(152, 241, 222, 255),
+        stop:0.06 rgba(152, 241, 222, 255),
+        stop:0.07 rgba(139, 251, 229, 127),
+        stop:1 rgba(255, 255, 255, 25));
+}
+ads--CDockWidgetTab[activeTab="false"] {
+        background: rgb(77, 77, 77);
+        color: white;
+}
+
+ads--CDockContainerWidget{
+        background: rgb(51,51,51);
+}
+ads--CDockAreaWidget{
+        background: red;/*rgb(51,51,51);*/
 }
 
 ads--CDockWidgetTab QLabel {
@@ -117,8 +136,12 @@ ads--CDockWidget {
 QScrollArea#dockWidgetScrollArea {
 	padding: 0px;
 	border: none;
+
 }
 
+TableTitleBar{
+    background:rgb(27,27,27)
+}
 
 /*****************************************************************************
  *

@@ -48,7 +48,8 @@
 
 #include "titlebar.h"
 #ifdef Q_OS_WIN
-#include <windows.h>
+#include <windows.h>        //注意头文件
+#include <windowsx.h>
 #ifdef _MSC_VER
 #pragma comment(lib, "User32.lib")
 #endif
@@ -357,7 +358,7 @@ static const char* windowsMessageString(int MessageId)
 #endif
 #endif
 
-
+const int boundaryWidth = 4;
 static unsigned int zOrderCounter = 0;
 /**
  * Private data class of CFloatingDockContainer class (pimpl)
@@ -819,54 +820,54 @@ bool CFloatingDockContainer::nativeEvent(const QByteArray &eventType, void *mess
 {
 	QWidget::nativeEvent(eventType, message, result);
 	MSG *msg = static_cast<MSG*>(message);
-	switch (msg->message)
-	{
-		case WM_MOVING:
-		{
-			if (d->isState(DraggingFloatingWidget))
-			{
-				d->updateDropOverlays(QCursor::pos());
-			}
-		}
-		break;
+    switch (msg->message)
+    {
+        case WM_MOVING:
+        {
+            if (d->isState(DraggingFloatingWidget))
+            {
+                d->updateDropOverlays(QCursor::pos());
+            }
+        }
+        break;
 
-		case WM_NCLBUTTONDOWN:
-			 if (msg->wParam == HTCAPTION && d->isState(DraggingInactive))
-			 {
-				ADS_PRINT("CFloatingDockContainer::nativeEvent WM_NCLBUTTONDOWN");
-				d->DragStartPos = pos();
-				d->setState(DraggingMousePressed);
-			 }
-			 break;
+        case WM_NCLBUTTONDOWN:
+             if (msg->wParam == HTCAPTION && d->isState(DraggingInactive))
+             {
+                ADS_PRINT("CFloatingDockContainer::nativeEvent WM_NCLBUTTONDOWN");
+                d->DragStartPos = pos();
+                d->setState(DraggingMousePressed);
+             }
+             break;
 
-		case WM_NCLBUTTONDBLCLK:
-			 d->setState(DraggingInactive);
-			 break;
+        case WM_NCLBUTTONDBLCLK:
+             d->setState(DraggingInactive);
+             break;
 
-		case WM_ENTERSIZEMOVE:
-			 if (d->isState(DraggingMousePressed))
-			 {
-				ADS_PRINT("CFloatingDockContainer::nativeEvent WM_ENTERSIZEMOVE");
-				d->setState(DraggingFloatingWidget);
-				d->updateDropOverlays(QCursor::pos());
-			 }
-			 break;
+        case WM_ENTERSIZEMOVE:
+             if (d->isState(DraggingMousePressed))
+             {
+                ADS_PRINT("CFloatingDockContainer::nativeEvent WM_ENTERSIZEMOVE");
+                d->setState(DraggingFloatingWidget);
+                d->updateDropOverlays(QCursor::pos());
+             }
+             break;
 
-		case WM_EXITSIZEMOVE:
-			 if (d->isState(DraggingFloatingWidget))
-			 {
-				ADS_PRINT("CFloatingDockContainer::nativeEvent WM_EXITSIZEMOVE");
-				if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
-				{
-					d->handleEscapeKey();
-				}
-				else
-				{
-					d->titleMouseReleaseEvent();
-				}
-			 }
-			 break;
-	}
+        case WM_EXITSIZEMOVE:
+             if (d->isState(DraggingFloatingWidget))
+             {
+                ADS_PRINT("CFloatingDockContainer::nativeEvent WM_EXITSIZEMOVE");
+                if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+                {
+                    d->handleEscapeKey();
+                }
+                else
+                {
+                    d->titleMouseReleaseEvent();
+                }
+             }
+             break;
+    }
 	return false;
 }
 #endif

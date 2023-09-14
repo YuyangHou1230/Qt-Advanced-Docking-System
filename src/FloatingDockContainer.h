@@ -135,6 +135,9 @@ private Q_SLOTS:
 	void onDockAreaCurrentChanged(int Index);
 
 protected:
+    
+    
+protected:
 	/**
 	 * Starts floating at the given global position.
 	 * Use moveToGlobalPos() to move the widget to a new position
