@@ -6,7 +6,7 @@
 #include <qapplication.h>
 #include <windows.h>
 #include <windowsx.h>
-const int boundaryWidth = 6;
+const int boundaryWidth = 10;
 namespace ads {
 
 CustomFloatingWidget::CustomFloatingWidget(ads::CDockManager *DockManager) :
@@ -33,10 +33,28 @@ void CustomFloatingWidget::reflectWindowsTitle(QString text)
     titleBar->SetDialogText(text);
 }
 
-void CustomFloatingWidget::turnView()
+void CustomFloatingWidget::setCursorIcon(QMouseEvent *e)
 {
-
+    if(e->x()<boundaryWidth&&e->y()<this->height()-boundaryWidth){
+        //left
+        setCursor(Qt::SizeHorCursor);
+    }else if(e->x()<boundaryWidth&&e->y()>=this->height()-boundaryWidth){
+        //leftBottom
+        setCursor(Qt::SizeBDiagCursor);
+    }else if(e->y()<this->height()&&e->y()>this->height()-boundaryWidth&&e->x()>boundaryWidth&&e->x()<this->width()-boundaryWidth){
+        //bottom
+        setCursor(Qt::SizeVerCursor);
+    }else if(e->x()>this->width()-boundaryWidth&&e->y()>=this->height()-boundaryWidth){
+        //rightBottom
+        setCursor(Qt::SizeFDiagCursor);
+    }else if(e->x()>this->width()-boundaryWidth){
+        //right
+        setCursor(Qt::SizeHorCursor);
+    }else {
+        setCursor(Qt::ArrowCursor);
+    }
 }
+
 
 void CustomFloatingWidget::updateTitle(QString text)
 {
@@ -60,6 +78,7 @@ void CustomFloatingWidget::init()
 
     titleBar->SetDialogText(windowTitle());
 
+    setMouseTracking(true);
     m_isMoving = false;
 }
 
@@ -88,7 +107,7 @@ bool CustomFloatingWidget::nativeEvent(const QByteArray &eventType, void *messag
 //            *result = HTTOP;
 //        else if(yPos>=height()-boundaryWidth)                             //下边
 //            *result = HTBOTTOM;
-////        return true;
+//        return true;
 //    }
     return false;
 }
@@ -127,19 +146,40 @@ void CustomFloatingWidget::mouseMoveEvent(QMouseEvent *e)
     int deltaY = movingMouse.ry()-m_pos.ry();
     qDebug()<<"deltaX = "<<deltaX;
     qDebug()<<"deltaY = "<<deltaY;
-    if(e->x()<boundaryWidth || e->x()>this->width()-boundaryWidth){
-        setCursor(Qt::SizeHorCursor);
+    setCursorIcon(e);
+    if(e->x()<boundaryWidth&&e->y()<this->height()-boundaryWidth){
+        //left
+        qDebug()<<"move left.... ";
+        setGeometry(m_pos.x()+deltaX,this->geometry().y(),m_priSize.width()-deltaX,m_priSize.height());
+//        move(m_pos.rx()+deltaX,this->geometry().y());
+//        resize(m_priSize.width()-deltaX,m_priSize.height());
+    }else if(e->x()<boundaryWidth&&e->y()>=this->height()-boundaryWidth){
+        //leftBottom
+        qDebug()<<"move leftBottom.... ";
+        move(m_pos.rx()+deltaX,this->geometry().y());
+        resize(m_priSize.width()-deltaX,m_priSize.height()+deltaY);
+    }else if(e->y()<this->height()&&e->y()>this->height()-boundaryWidth&&e->x()>boundaryWidth&&e->x()<this->width()-boundaryWidth){
+        //bottom
+        qDebug()<<"move YYYY ";
+        resize(m_priSize.width(),m_priSize.height()+deltaY);
+    }else if(e->x()>this->width()-boundaryWidth&&e->y()>=this->height()-boundaryWidth){
+        //rightBottom
+        qDebug()<<"move rightBottom.... ";
         resize(m_priSize.width()+deltaX,m_priSize.height()+deltaY);
-//        setGeometry(m_pos.rx(),m_pos.ry(),m_priSize.width()+deltaX,m_priSize.height()+deltaY);
-    }else if(e->y()<this->height()&&e->y()>this->height()-boundaryWidth){
-        setCursor(Qt::SizeVerCursor);
-        resize(m_priSize.width()+deltaX,m_priSize.height()+deltaY);
-//        setGeometry(m_pos.rx(),m_pos.ry(),m_priSize.width()+deltaX,m_priSize.height()+deltaY);
-    }else {
-        setCursor(Qt::ArrowCursor);
+    }else if(e->x()>this->width()-boundaryWidth){
+        //right
+        qDebug()<<"move right.... ";
+        resize(m_priSize.width()+deltaX,m_priSize.height());
     }
 
     return QWidget::mouseMoveEvent(e);
+}
+
+void CustomFloatingWidget::mouseReleaseEvent(QMouseEvent *e)
+{
+    m_isMoving = false;
+    setCursor(Qt::ArrowCursor);
+//    setCursorIcon(e);
 }
 
 void CustomFloatingWidget::enterEvent(QEvent *event)

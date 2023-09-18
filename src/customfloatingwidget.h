@@ -28,8 +28,8 @@ public:
 
     virtual void reflectWindowsTitle(QString text) override;
 
-    //改变窗口大小
-    void turnView();
+    //改变鼠标样式
+    void setCursorIcon(QMouseEvent *e);
 
 private slots:
     void updateTitle(QString text);
@@ -50,6 +50,7 @@ protected:
 
      void mousePressEvent(QMouseEvent* e) override;
      void mouseMoveEvent(QMouseEvent* e) override;
+     void mouseReleaseEvent(QMouseEvent* e) override;
 
      void enterEvent(QEvent *event) override;
      void leaveEvent(QEvent *event) override;
