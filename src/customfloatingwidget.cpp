@@ -38,43 +38,28 @@ void CustomFloatingWidget::setCursorIcon(QMouseEvent *e)
     if(e->x()<boundaryWidth&&e->y()<this->height()-boundaryWidth){
         //left
         setCursor(Qt::SizeHorCursor);
+        m_boundType = LeftBound;
     }else if(e->x()<boundaryWidth&&e->y()>=this->height()-boundaryWidth){
         //leftBottom
         setCursor(Qt::SizeBDiagCursor);
+         m_boundType = LeftBottomBound;
     }else if(e->y()<this->height()&&e->y()>this->height()-boundaryWidth&&e->x()>boundaryWidth&&e->x()<this->width()-boundaryWidth){
         //bottom
         setCursor(Qt::SizeVerCursor);
+        m_boundType = BottomBound;
     }else if(e->x()>this->width()-boundaryWidth&&e->y()>=this->height()-boundaryWidth){
         //rightBottom
         setCursor(Qt::SizeFDiagCursor);
+        m_boundType = RightBottomBound;
     }else if(e->x()>this->width()-boundaryWidth){
         //right
         setCursor(Qt::SizeHorCursor);
+        m_boundType = RightBound;
     }else {
         setCursor(Qt::ArrowCursor);
+        m_boundType = NoBound;
     }
 }
-
-void CustomFloatingWidget::setMaxWidth(int width)
-{
-    m_widthRange.setY(width);
-}
-
-void CustomFloatingWidget::setMinWidth(int width)
-{
-    m_widthRange.setX(width);
-}
-
-void CustomFloatingWidget::setMaxHeight(int height)
-{
-    m_heightRange.setY(height);
-}
-
-void CustomFloatingWidget::setMinHeight(int height)
-{
-    m_heightRange.setX(height);
-}
-
 
 void CustomFloatingWidget::updateTitle(QString text)
 {
@@ -101,10 +86,6 @@ void CustomFloatingWidget::init()
     setMouseTracking(true);
     m_isMoving = false;
     m_boundType = NoBound;
-    setMaxWidth(99999);
-    setMinWidth(400);
-    setMaxHeight(99999);
-    setMinHeight(400);
 }
 
 bool CustomFloatingWidget::nativeEvent(const QByteArray &eventType, void *message, long *result)
@@ -164,58 +145,39 @@ void CustomFloatingWidget::mouseMoveEvent(QMouseEvent *e)
     int deltaY = movingMouse.ry()-m_clickPos.ry();
     qDebug()<<"deltaX = "<<deltaX;
     qDebug()<<"deltaY = "<<deltaY;
-    setCursorIcon(e);
-    if(e->x()<boundaryWidth&&e->y()<this->height()-boundaryWidth){
-        //left
-        if(deltaX > this->width()||(m_boundType == RightBound && this->width()<=m_widthRange.x())){//width不能为负,且当宽度为最小宽度时不改变
-            return QWidget::mouseMoveEvent(e);
-        }
-        m_boundType = LeftBound;
-        setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height());
-    }else if(e->x()<boundaryWidth&&e->y()>=this->height()-boundaryWidth){
-        //leftBottom
+    switch (m_boundType) {
+    case ads::CustomFloatingWidget::NoBound:
+        break;
+    case ads::CustomFloatingWidget::LeftBound:
+    {
         if(deltaX > this->width()){//width不能为负
             return QWidget::mouseMoveEvent(e);
         }
-        m_boundType = LeftBottomBound;
-        setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height()+deltaY);
-//        move(m_clickPos.rx()+deltaX,this->geometry().y());
-//        resize(m_priSize.width()-deltaX,m_priSize.height()+deltaY);
-    }else if(e->y()<this->height()&&e->y()>this->height()-boundaryWidth&&e->x()>boundaryWidth&&e->x()<this->width()-boundaryWidth){
-        //bottom
-        m_boundType = BottomBound;
-        resize(m_priSize.width(),m_priSize.height()+deltaY);
-    }else if(e->x()>this->width()-boundaryWidth&&e->y()>=this->height()-boundaryWidth){
-        //rightBottom
-        m_boundType = RightBottomBound;
-        resize(m_priSize.width()+deltaX,m_priSize.height()+deltaY);
-    }else if(e->x()>this->width()-boundaryWidth){
-        //right
-//        qDebug()<<"right .... ";
-        if(m_boundType == LeftBound && this->width()<=m_widthRange.x()){//width不能为负
-            return QWidget::mouseMoveEvent(e);
-        }
-        m_boundType = RightBound;
-        resize(m_priSize.width()+deltaX,m_priSize.height());
+        setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height());
     }
-
-    //边界判断
-    if(this->geometry().width()<m_widthRange.x()&&this->geometry().height()<m_heightRange.x()){
-        resize(m_widthRange.x(),m_heightRange.x());
-    }else if (this->geometry().width()<m_widthRange.x()) {
-        if(m_boundType == RightBound){
-            resize(m_widthRange.x(),this->height());
-        }else if(m_boundType == LeftBound){//左边移动时,geometry的横坐标不能动
-            setGeometry(m_widgetPos.x(),m_widgetPos.y(),m_widthRange.x(),this->height());
-        }
-    }else if (this->geometry().width()>m_widthRange.y()) {
-        resize(m_widthRange.y(),this->height());
-    }else if (this->geometry().height()<m_heightRange.x()) {
-        resize(this->width(),m_heightRange.x());
-    }else if (this->geometry().height()>m_heightRange.y()) {
-        resize(this->width(),m_heightRange.y());
+        break;
+    case ads::CustomFloatingWidget::LeftBottomBound:
+    {
+          setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height()+deltaY);
     }
+        break;
+    case ads::CustomFloatingWidget::BottomBound:
+    {
+         resize(m_priSize.width(),m_priSize.height()+deltaY);
+    }
+        break;
+    case ads::CustomFloatingWidget::RightBottomBound:
+    {
+         resize(m_priSize.width()+deltaX,m_priSize.height()+deltaY);
+    }
+        break;
+    case ads::CustomFloatingWidget::RightBound:
+    {
+         resize(m_priSize.width()+deltaX,m_priSize.height());
+    }
+        break;
 
+    }
     return QWidget::mouseMoveEvent(e);
 }
 
@@ -224,7 +186,6 @@ void CustomFloatingWidget::mouseReleaseEvent(QMouseEvent *e)
     m_isMoving = false;
     m_boundType = NoBound;
     setCursor(Qt::ArrowCursor);
-
 }
 
 void CustomFloatingWidget::enterEvent(QEvent *event)

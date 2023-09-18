@@ -31,12 +31,7 @@ public:
     //改变鼠标样式
     void setCursorIcon(QMouseEvent *e);
 
-    //设置floating高度与宽度范围
-    void setMaxWidth(int width);
-    void setMinWidth(int width);
-
-    void setMaxHeight(int height);
-    void setMinHeight(int height);
+    //设置floating高度与宽度范围 在基类
 
     enum BoundType{
         NoBound = 0,
@@ -60,9 +55,6 @@ private:
     bool m_isMoving;
     //上一次的宽度
     QRect m_priSize;
-
-    QRect m_widthRange;//x:min y:max
-    QRect m_heightRange;//x:min y:max
 
     TableTitleBar* titleBar;
 

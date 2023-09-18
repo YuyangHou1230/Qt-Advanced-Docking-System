@@ -376,6 +376,7 @@ struct FloatingDockContainerPrivate
 	QPoint DragStartPos;
 	bool Hiding = false;
 	bool AutoHideChildren = true;
+
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
     QWidget* MouseEventHandler = nullptr;
     CFloatingWidgetTitleBar* TitleBar = nullptr;
@@ -1033,6 +1034,27 @@ bool CFloatingDockContainer::isClosable() const
 }
 
 //============================================================================
+void CFloatingDockContainer::setMaxWidth(int width)
+{
+    m_widthRange.setY(width);
+
+}
+
+void CFloatingDockContainer::setMinWidth(int width)
+{
+    m_widthRange.setX(width);
+}
+
+void CFloatingDockContainer::setMaxHeight(int height)
+{
+    m_heightRange.setY(height);
+}
+
+void CFloatingDockContainer::setMinHeight(int height)
+{
+    m_heightRange.setX(height);
+}
+
 void CFloatingDockContainer::onMouseLeftPress()
 {
     if (d->isState(DraggingInactive))

@@ -105,6 +105,19 @@ public:
 class ADS_EXPORT CFloatingDockContainer : public tFloatingWidgetBase, public IFloatingWidget
 {
 	Q_OBJECT
+    //***********new*******************
+public:
+    //设置floating高度与宽度范围
+    void setMaxWidth(int width);
+    void setMinWidth(int width);
+
+
+    void setMaxHeight(int height);
+    void setMinHeight(int height);
+
+
+    QRect m_widthRange;//x:min y:max
+    QRect m_heightRange;//x:min y:max
 
 protected:
 	FloatingDockContainerPrivate* d; ///< private data (pimpl)
