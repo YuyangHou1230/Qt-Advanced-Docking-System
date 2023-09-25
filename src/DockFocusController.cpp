@@ -272,8 +272,8 @@ void CDockFocusController::onApplicationFocusChanged(QWidget* focusedOld, QWidge
 		return;
 	}
 
-    ADS_PRINT("CDockFocusController::onApplicationFocusChanged "
-    	<< " old: " << focusedOld << " new: " << focusedNow);
+    //ADS_PRINT("CDockFocusController::onApplicationFocusChanged "
+//    	<< " old: " << focusedOld << " new: " << focusedNow);
 	if (!focusedNow)
 	{
 		return;

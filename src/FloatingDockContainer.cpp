@@ -627,7 +627,7 @@ void FloatingDockContainerPrivate::updateDropOverlays(const QPoint &GlobalPos)
 //============================================================================
 void FloatingDockContainerPrivate::handleEscapeKey()
 {
-	ADS_PRINT("FloatingDockContainerPrivate::handleEscapeKey()");
+    //ADS_PRINT("FloatingDockContainerPrivate::handleEscapeKey()");
 	setState(DraggingInactive);
 	DockManager->containerOverlay()->hideOverlay();
 	DockManager->dockAreaOverlay()->hideOverlay();
@@ -711,13 +711,13 @@ CFloatingDockContainer::CFloatingDockContainer(CDockManager *DockManager) :
 //        setWindowFlags(Qt::Window |Qt::FramelessWindowHint);
 //	QBoxLayout *l = new QBoxLayout(QBoxLayout::TopToBottom);
     QVBoxLayout *l = new QVBoxLayout();
-	l->setContentsMargins(0, 0, 0, 0);
+    l->setContentsMargins(2, 2, 2, 2);
 	l->setSpacing(0);
 	setLayout(l);
 
 	l->addWidget(d->DockContainer);
 #endif
-
+//    setMinimumSize(1000,1000);
 	DockManager->registerFloatingWidget(this);
 }
 
@@ -753,7 +753,7 @@ CFloatingDockContainer::CFloatingDockContainer(CDockWidget *DockWidget) :
 //============================================================================
 CFloatingDockContainer::~CFloatingDockContainer()
 {
-	ADS_PRINT("~CFloatingDockContainer");
+    //ADS_PRINT("~CFloatingDockContainer");
 	if (d->DockManager)
 	{
 		d->DockManager->removeFloatingWidget(this);
@@ -776,7 +776,7 @@ void CFloatingDockContainer::changeEvent(QEvent *event)
 	case QEvent::ActivationChange:
 		if (isActiveWindow())
 		{
-			ADS_PRINT("FloatingWidget::changeEvent QEvent::ActivationChange ");
+            //ADS_PRINT("FloatingWidget::changeEvent QEvent::ActivationChange ");
 			d->zOrderIndex = ++zOrderCounter;
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
@@ -835,7 +835,7 @@ bool CFloatingDockContainer::nativeEvent(const QByteArray &eventType, void *mess
         case WM_NCLBUTTONDOWN:
              if (msg->wParam == HTCAPTION && d->isState(DraggingInactive))
              {
-                ADS_PRINT("CFloatingDockContainer::nativeEvent WM_NCLBUTTONDOWN");
+                //ADS_PRINT("CFloatingDockContainer::nativeEvent WM_NCLBUTTONDOWN");
                 d->DragStartPos = pos();
                 d->setState(DraggingMousePressed);
              }
@@ -848,7 +848,7 @@ bool CFloatingDockContainer::nativeEvent(const QByteArray &eventType, void *mess
         case WM_ENTERSIZEMOVE:
              if (d->isState(DraggingMousePressed))
              {
-                ADS_PRINT("CFloatingDockContainer::nativeEvent WM_ENTERSIZEMOVE");
+                //ADS_PRINT("CFloatingDockContainer::nativeEvent WM_ENTERSIZEMOVE");
                 d->setState(DraggingFloatingWidget);
                 d->updateDropOverlays(QCursor::pos());
              }
@@ -857,7 +857,7 @@ bool CFloatingDockContainer::nativeEvent(const QByteArray &eventType, void *mess
         case WM_EXITSIZEMOVE:
              if (d->isState(DraggingFloatingWidget))
              {
-                ADS_PRINT("CFloatingDockContainer::nativeEvent WM_EXITSIZEMOVE");
+                //ADS_PRINT("CFloatingDockContainer::nativeEvent WM_EXITSIZEMOVE");
                 if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
                 {
                     d->handleEscapeKey();
@@ -877,7 +877,7 @@ bool CFloatingDockContainer::nativeEvent(const QByteArray &eventType, void *mess
 //============================================================================
 void CFloatingDockContainer::closeEvent(QCloseEvent *event)
 {
-	ADS_PRINT("CFloatingDockContainer closeEvent");
+    //ADS_PRINT("CFloatingDockContainer closeEvent");
 	d->setState(DraggingInactive);
 	event->ignore();
 	if (!isClosable())
@@ -1034,32 +1034,12 @@ bool CFloatingDockContainer::isClosable() const
 }
 
 //============================================================================
-void CFloatingDockContainer::setMaxWidth(int width)
-{
-    m_widthRange.setY(width);
-
-}
-
-void CFloatingDockContainer::setMinWidth(int width)
-{
-    m_widthRange.setX(width);
-}
-
-void CFloatingDockContainer::setMaxHeight(int height)
-{
-    m_heightRange.setY(height);
-}
-
-void CFloatingDockContainer::setMinHeight(int height)
-{
-    m_heightRange.setX(height);
-}
 
 void CFloatingDockContainer::onMouseLeftPress()
 {
     if (d->isState(DraggingInactive))
     {
-       ADS_PRINT("CFloatingDockContainer::nativeEvent WM_NCLBUTTONDOWN");
+       //ADS_PRINT("CFloatingDockContainer::nativeEvent WM_NCLBUTTONDOWN");
        d->DragStartPos = pos();
        d->setState(DraggingMousePressed);
     }
@@ -1069,7 +1049,7 @@ void CFloatingDockContainer::onMouseLeftRelease()
 {
     if (d->isState(DraggingFloatingWidget))
     {
-       ADS_PRINT("CFloatingDockContainer::nativeEvent WM_EXITSIZEMOVE");
+       //ADS_PRINT("CFloatingDockContainer::nativeEvent WM_EXITSIZEMOVE");
        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
        {
            d->handleEscapeKey();
@@ -1085,7 +1065,7 @@ void CFloatingDockContainer::onMouseMoving()
 {
     if (d->isState(DraggingMousePressed))
     {
-       ADS_PRINT("CFloatingDockContainer::nativeEvent WM_ENTERSIZEMOVE");
+       //ADS_PRINT("CFloatingDockContainer::nativeEvent WM_ENTERSIZEMOVE");
        d->setState(DraggingFloatingWidget);
 
     }
@@ -1111,7 +1091,7 @@ void CFloatingDockContainer::reflectWindowsTitle(QString text)
 
 void CFloatingDockContainer::onDockAreasAddedOrRemoved()
 {
-	ADS_PRINT("CFloatingDockContainer::onDockAreasAddedOrRemoved()");
+    //ADS_PRINT("CFloatingDockContainer::onDockAreasAddedOrRemoved()");
 	auto TopLevelDockArea = d->DockContainer->topLevelDockArea();
 	if (TopLevelDockArea)
 	{
@@ -1223,7 +1203,7 @@ void CFloatingDockContainer::hideAndDeleteLater()
 //============================================================================
 void CFloatingDockContainer::finishDragging()
 {
-	ADS_PRINT("CFloatingDockContainer::finishDragging");
+    //ADS_PRINT("CFloatingDockContainer::finishDragging");
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
 	setWindowOpacity(1);
 	activateWindow();
@@ -1257,7 +1237,7 @@ bool CFloatingDockContainer::event(QEvent *e)
 		if (e->type() == QEvent::NonClientAreaMouseButtonPress && QGuiApplication::mouseButtons().testFlag(Qt::LeftButton))
 #endif
 		{
-			ADS_PRINT("FloatingWidget::event Event::NonClientAreaMouseButtonPress" << e->type());
+            //ADS_PRINT("FloatingWidget::event Event::NonClientAreaMouseButtonPress" << e->type());
 			d->DragStartPos = pos();
 			d->setState(DraggingMousePressed);
 		}
@@ -1268,7 +1248,7 @@ bool CFloatingDockContainer::event(QEvent *e)
 		switch (e->type())
 		{
 		case QEvent::NonClientAreaMouseButtonDblClick:
-			ADS_PRINT("FloatingWidget::event QEvent::NonClientAreaMouseButtonDblClick");
+            //ADS_PRINT("FloatingWidget::event QEvent::NonClientAreaMouseButtonDblClick");
 			d->setState(DraggingInactive);
 			break;
 
@@ -1295,7 +1275,7 @@ bool CFloatingDockContainer::event(QEvent *e)
 	case DraggingFloatingWidget:
 		if (e->type() == QEvent::NonClientAreaMouseButtonRelease)
 		{
-			ADS_PRINT("FloatingWidget::event QEvent::NonClientAreaMouseButtonRelease");
+            //ADS_PRINT("FloatingWidget::event QEvent::NonClientAreaMouseButtonRelease");
 			d->titleMouseReleaseEvent();
 		}
 		break;

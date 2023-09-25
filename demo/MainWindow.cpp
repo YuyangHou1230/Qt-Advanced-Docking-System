@@ -806,16 +806,20 @@ void CMainWindow::closeEvent(QCloseEvent* event)
 //============================================================================
 void CMainWindow::on_actionSaveState_triggered(bool)
 {
+    #ifdef QT_DEBUG
 	qDebug() << "MainWindow::on_actionSaveState_triggered";
-	d->saveState();
+    #endif
+    d->saveState();
 }
 
 
 //============================================================================
 void CMainWindow::on_actionRestoreState_triggered(bool)
 {
+    #ifdef QT_DEBUG
 	qDebug() << "MainWindow::on_actionRestoreState_triggered";
-	d->restoreState();
+    #endif
+    d->restoreState();
 }
 
 

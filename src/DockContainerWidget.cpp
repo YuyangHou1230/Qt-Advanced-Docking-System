@@ -408,7 +408,7 @@ eDropMode DockContainerWidgetPrivate::getDropMode(const QPoint& TargetPos)
 
 		if (dropArea != InvalidDockWidgetArea)
 		{
-            ADS_PRINT("Dock Area Drop Content: " << dropArea);
+            //ADS_PRINT("Dock Area Drop Content: " << dropArea);
             return DropModeIntoArea;
 		}
 	}
@@ -417,7 +417,7 @@ eDropMode DockContainerWidgetPrivate::getDropMode(const QPoint& TargetPos)
 	if (InvalidDockWidgetArea == dropArea)
 	{
 		dropArea = ContainerDropArea;
-        ADS_PRINT("Container Drop Content: " << dropArea);
+        //ADS_PRINT("Container Drop Content: " << dropArea);
 		if (dropArea != InvalidDockWidgetArea)
 		{
 			return DropModeIntoContainer;
@@ -877,8 +877,8 @@ void DockContainerWidgetPrivate::saveChildNodesState(QXmlStreamWriter& s, QWidge
 		s.writeStartElement("Splitter");
 		s.writeAttribute("Orientation", (Splitter->orientation() == Qt::Horizontal) ? "|" : "-");
 		s.writeAttribute("Count", QString::number(Splitter->count()));
-        ADS_PRINT("NodeSplitter orient: " << Splitter->orientation()
-            << " WidgetCont: " << Splitter->count());
+        //ADS_PRINT("NodeSplitter orient: " << Splitter->orientation()
+//            << " WidgetCont: " << Splitter->count());
 			for (int i = 0; i < Splitter->count(); ++i)
 			{
 				saveChildNodesState(s, Splitter->widget(i));
@@ -948,8 +948,8 @@ bool DockContainerWidgetPrivate::restoreSplitter(CDockingStateReader& s,
 	{
 		return false;
 	}
-    ADS_PRINT("Restore NodeSplitter Orientation: " <<  Orientation <<
-            " WidgetCount: " << WidgetCount);
+    //ADS_PRINT("Restore NodeSplitter Orientation: " <<  Orientation <<
+//            " WidgetCount: " << WidgetCount);
 	QSplitter* Splitter = nullptr;
 	if (!Testing)
 	{
@@ -972,7 +972,7 @@ bool DockContainerWidgetPrivate::restoreSplitter(CDockingStateReader& s,
         else if (s.name() == QLatin1String("Sizes"))
 		{
 			QString sSizes = s.readElementText().trimmed();
-            ADS_PRINT("Sizes: " << sSizes);
+            //ADS_PRINT("Sizes: " << sSizes);
 			QTextStream TextStream(&sSizes);
 			while (!TextStream.atEnd())
 			{
@@ -996,8 +996,8 @@ bool DockContainerWidgetPrivate::restoreSplitter(CDockingStateReader& s,
 			continue;
 		}
 
-        ADS_PRINT("ChildNode isVisible " << ChildNode->isVisible()
-            << " isVisibleTo " << ChildNode->isVisibleTo(Splitter));
+        //ADS_PRINT("ChildNode isVisible " << ChildNode->isVisible()
+//            << " isVisibleTo " << ChildNode->isVisibleTo(Splitter));
 		Splitter->addWidget(ChildNode);
 		Visible |= ChildNode->isVisibleTo(Splitter);
 	}
@@ -1134,22 +1134,22 @@ bool DockContainerWidgetPrivate::restoreChildNodes(CDockingStateReader& s,
         if (s.name() == QLatin1String("Splitter"))
 		{
 			Result = restoreSplitter(s, CreatedWidget, Testing);
-            ADS_PRINT("Splitter");
+            //ADS_PRINT("Splitter");
 		}
         else if (s.name() == QLatin1String("Area"))
 		{
 			Result = restoreDockArea(s, CreatedWidget, Testing);
-            ADS_PRINT("DockAreaWidget");
+            //ADS_PRINT("DockAreaWidget");
 		}
         else if (s.name() == QLatin1String("SideBar"))
         {
         	Result = restoreSideBar(s, CreatedWidget, Testing);
-        	ADS_PRINT("SideBar");
+            //ADS_PRINT("SideBar");
         }
 		else
 		{
 			s.skipCurrentElement();
-            ADS_PRINT("Unknown element");
+            //ADS_PRINT("Unknown element");
 		}
 	}
 
@@ -1292,7 +1292,7 @@ CDockAreaWidget* DockContainerWidgetPrivate::addDockWidgetToDockArea(DockWidgetA
 	int index = TargetAreaSplitter ->indexOf(TargetDockArea);
 	if (TargetAreaSplitter->orientation() == InsertParam.orientation())
 	{
-		ADS_PRINT("TargetAreaSplitter->orientation() == InsertParam.orientation()");
+        //ADS_PRINT("TargetAreaSplitter->orientation() == InsertParam.orientation()");
 		TargetAreaSplitter->insertWidget(index + InsertParam.insertOffset(), NewDockArea);
         updateSplitterHandles(TargetAreaSplitter);
         // do nothing, if flag is not enabled
@@ -1303,7 +1303,7 @@ CDockAreaWidget* DockContainerWidgetPrivate::addDockWidgetToDockArea(DockWidgetA
 	}
 	else
 	{
-		ADS_PRINT("TargetAreaSplitter->orientation() != InsertParam.orientation()");
+        //ADS_PRINT("TargetAreaSplitter->orientation() != InsertParam.orientation()");
 		auto TargetAreaSizes = TargetAreaSplitter->sizes();
 		QSplitter* NewSplitter = newSplitter(InsertParam.orientation());
 		NewSplitter->addWidget(TargetDockArea);
@@ -1486,7 +1486,7 @@ void CDockContainerWidget::addDockArea(CDockAreaWidget* DockAreaWidget,
 //============================================================================
 void CDockContainerWidget::removeDockArea(CDockAreaWidget* area)
 {
-    ADS_PRINT("CDockContainerWidget::removeDockArea");
+    //ADS_PRINT("CDockContainerWidget::removeDockArea");
     // If it is an auto hide area, then there is nothing much to do
 	if (area->isAutoHide())
 	{
@@ -1519,7 +1519,7 @@ void CDockContainerWidget::removeDockArea(CDockAreaWidget* area)
 	// avoid too many empty splitters
 	if (Splitter == d->RootSplitter)
 	{
-        ADS_PRINT("Removed from RootSplitter");
+        //ADS_PRINT("Removed from RootSplitter");
 		// If splitter is empty, we are finished
 		if (!Splitter->count())
 		{
@@ -1541,11 +1541,11 @@ void CDockContainerWidget::removeDockArea(CDockAreaWidget* area)
 		QLayoutItem* li = d->Layout->replaceWidget(Splitter, ChildSplitter);
 		d->RootSplitter = ChildSplitter;
 		delete li;
-        ADS_PRINT("RootSplitter replaced by child splitter");
+        //ADS_PRINT("RootSplitter replaced by child splitter");
 	}
 	else if (Splitter->count() == 1)
 	{
-        ADS_PRINT("Replacing splitter with content");
+        //ADS_PRINT("Replacing splitter with content");
 		QSplitter* ParentSplitter = internal::findParent<QSplitter*>(Splitter);
 		auto Sizes = ParentSplitter->sizes();
 		QWidget* widget = Splitter->widget(0);
@@ -1626,7 +1626,7 @@ int CDockContainerWidget::visibleDockAreaCount() const
 void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWidget,
 	const QPoint& TargetPos)
 {
-    ADS_PRINT("CDockContainerWidget::dropFloatingWidget");
+    //ADS_PRINT("CDockContainerWidget::dropFloatingWidget");
     CDockWidget* SingleDroppedDockWidget = FloatingWidget->topLevelDockWidget();
     CDockWidget* SingleDockWidget = topLevelDockWidget();
     CDockAreaWidget* DockArea = dockAreaAt(TargetPos);
@@ -1647,7 +1647,7 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
 
         if (dropArea != InvalidDockWidgetArea)
         {
-            ADS_PRINT("Dock Area Drop Content: " << dropArea);
+            //ADS_PRINT("Dock Area Drop Content: " << dropArea);
             d->dropIntoSection(FloatingWidget, DockArea, dropArea);
             Dropped = true;
         }
@@ -1657,7 +1657,7 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
     if (InvalidDockWidgetArea == dropArea)
     {
         dropArea = ContainerDropArea;
-        ADS_PRINT("Container Drop Content: " << dropArea);
+        //ADS_PRINT("Container Drop Content: " << dropArea);
         if (dropArea != InvalidDockWidgetArea)
         {
             d->dropIntoContainer(FloatingWidget, dropArea);
@@ -1697,7 +1697,7 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
 
 void CDockContainerWidget::dropFloatingWidgetToCenter(CFloatingDockContainer *FloatingWidget, const QPoint &TargetPos)
 {
-    ADS_PRINT("CDockContainerWidget::dropFloatingWidget");
+    //ADS_PRINT("CDockContainerWidget::dropFloatingWidget");
     CDockWidget* SingleDroppedDockWidget = FloatingWidget->topLevelDockWidget();
     CDockWidget* SingleDockWidget = topLevelDockWidget();
     CDockAreaWidget* DockArea = dockAreaAt(TargetPos);
@@ -1709,7 +1709,7 @@ void CDockContainerWidget::dropFloatingWidgetToCenter(CFloatingDockContainer *Fl
         auto dropOverlay = d->DockManager->dockAreaOverlay();
         dropOverlay->setAllowedAreas(DockArea->allowedAreas());
         dropArea = CenterDockWidgetArea;//dropOverlay->showOverlay(DockArea);
-        ADS_PRINT("Dock Area Drop Content: " << dropArea);
+        //ADS_PRINT("Dock Area Drop Content: " << dropArea);
         d->dropIntoSection(FloatingWidget, DockArea, dropArea);
         Dropped = true;
     }
@@ -1718,7 +1718,7 @@ void CDockContainerWidget::dropFloatingWidgetToCenter(CFloatingDockContainer *Fl
     if (InvalidDockWidgetArea == dropArea)
     {
         dropArea = ContainerDropArea;
-        ADS_PRINT("Container Drop Content: " << dropArea);
+        //ADS_PRINT("Container Drop Content: " << dropArea);
         if (dropArea != InvalidDockWidgetArea)
         {
             d->dropIntoContainer(FloatingWidget, dropArea);
@@ -1829,8 +1829,8 @@ bool CDockContainerWidget::hasOpenDockAreas() const
 //============================================================================
 void CDockContainerWidget::saveState(QXmlStreamWriter& s) const
 {
-    ADS_PRINT("CDockContainerWidget::saveState isFloating "
-        << isFloating());
+    //ADS_PRINT("CDockContainerWidget::saveState isFloating "
+//        << isFloating());
 
 	s.writeStartElement("Container");
 	s.writeAttribute("Floating", QString::number(isFloating() ? 1 : 0));
@@ -1854,7 +1854,7 @@ void CDockContainerWidget::saveState(QXmlStreamWriter& s) const
 bool CDockContainerWidget::restoreState(CDockingStateReader& s, bool Testing)
 {
 	bool IsFloating = s.attributes().value("Floating").toInt();
-    ADS_PRINT("Restore CDockContainerWidget Floating" << IsFloating);
+    //ADS_PRINT("Restore CDockContainerWidget Floating" << IsFloating);
 
 	QWidget* NewRootSplitter {};
 	if (!Testing)
@@ -1866,7 +1866,7 @@ bool CDockContainerWidget::restoreState(CDockingStateReader& s, bool Testing)
 
 	if (IsFloating)
 	{
-        ADS_PRINT("Restore floating widget");
+        //ADS_PRINT("Restore floating widget");
         if (!s.readNextStartElement() || s.name() != QLatin1String("Geometry"))
 		{
 			return false;
@@ -2057,7 +2057,7 @@ void CDockContainerWidget::registerAutoHideWidget(CAutoHideDockContainer* Autohi
 {
 	d->AutoHideWidgets.append(AutohideWidget);
 	Q_EMIT autoHideWidgetCreated(AutohideWidget);
-    ADS_PRINT("d->AutoHideWidgets.count() " << d->AutoHideWidgets.count());
+    //ADS_PRINT("d->AutoHideWidgets.count() " << d->AutoHideWidgets.count());
 }
 
 //============================================================================

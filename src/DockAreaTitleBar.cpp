@@ -414,7 +414,7 @@ void CDockAreaTitleBar::onTabsMenuAboutToShow()
 //============================================================================
 void CDockAreaTitleBar::onCloseButtonClicked()
 {
-    ADS_PRINT("CDockAreaTitleBar::onCloseButtonClicked");
+    //ADS_PRINT("CDockAreaTitleBar::onCloseButtonClicked");
 	if (CDockManager::testAutoHideConfigFlag(CDockManager::AutoHideCloseButtonCollapsesDock) &&
 		d->DockArea->autoHideDockContainer())
 	{
@@ -592,7 +592,7 @@ void CDockAreaTitleBar::mouseReleaseEvent(QMouseEvent* ev)
 {
 	if (ev->button() == Qt::LeftButton)
 	{
-        ADS_PRINT("CDockAreaTitleBar::mouseReleaseEvent");
+        //ADS_PRINT("CDockAreaTitleBar::mouseReleaseEvent");
 		ev->accept();
 		auto CurrentDragState = d->DragState;
 		d->DragStartMousePos = QPoint();
@@ -647,7 +647,7 @@ void CDockAreaTitleBar::mouseMoveEvent(QMouseEvent* ev)
 	int DragDistance = (d->DragStartMousePos - ev->pos()).manhattanLength();
 	if (DragDistance >= CDockManager::startDragDistance())
 	{
-        ADS_PRINT("CDockAreaTitleBar::startFloating");
+        //ADS_PRINT("CDockAreaTitleBar::startFloating");
 		d->startFloating(d->DragStartMousePos);
 		auto Overlay = d->DockArea->dockManager()->containerOverlay();
 		Overlay->setAllowedAreas(OuterDockAreas);

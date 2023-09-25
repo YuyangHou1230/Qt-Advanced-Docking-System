@@ -152,7 +152,7 @@ CAutoHideTab::CAutoHideTab(QWidget* parent) :
 //============================================================================
 CAutoHideTab::~CAutoHideTab()
 {
-	ADS_PRINT("~CDockWidgetSideTab()");
+//	//ADS_PRINT("~CDockWidgetSideTab()");
 	delete d;
 }
 

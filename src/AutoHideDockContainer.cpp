@@ -276,7 +276,7 @@ void CAutoHideDockContainer::updateSize()
 //============================================================================
 CAutoHideDockContainer::~CAutoHideDockContainer()
 {
-	ADS_PRINT("~CAutoHideDockContainer");
+//	//ADS_PRINT("~CAutoHideDockContainer");
 
 	// Remove event filter in case there are any queued messages
 	qApp->removeEventFilter(this);
@@ -459,7 +459,7 @@ void CAutoHideDockContainer::collapseView(bool Enable)
 		qApp->installEventFilter(this);
 	}
 
-	ADS_PRINT("CAutoHideDockContainer::collapseView " << Enable);
+//	//ADS_PRINT("CAutoHideDockContainer::collapseView " << Enable);
     d->SideTab->updateStyle();
 }
 

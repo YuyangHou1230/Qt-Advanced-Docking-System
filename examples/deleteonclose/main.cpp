@@ -37,7 +37,9 @@ int main(int argc, char *argv[])
     w.setDockManager(dockManager);
     QObject::connect(dockManager, &ads::CDockManager::focusedDockWidgetChanged, [] (ads::CDockWidget* old, ads::CDockWidget* now) {
         static int Count = 0;
+        #ifdef QT_DEBUG
     	qDebug() << Count++ << " CDockManager::focusedDockWidgetChanged old: " << (old ? old->objectName() : "-") << " now: " << now->objectName() << " visible: " << now->isVisible();
+        #endif
         now->widget()->setFocus();
     });
 
@@ -51,7 +53,9 @@ int main(int argc, char *argv[])
         dw->setWidget(editor);
         dw->setFeature(ads::CDockWidget::DockWidgetDeleteOnClose, true);
         auto area = dockManager->addDockWidgetTab(ads::CenterDockWidgetArea, dw);
+        #ifdef QT_DEBUG
         qDebug() << "doc dock widget created!" << dw << area;
+    #endif
     });
 	
 	auto dw = new ads::CDockWidget(QStringLiteral("test %1 [DeleteContentOnClose]").arg(i++), &w);
@@ -64,14 +68,18 @@ int main(int argc, char *argv[])
 		return new QTextEdit(QStringLiteral("recreated lorem ipsum... times %1").arg(++timesRecreated), dw);
 	});
 	auto area = dockManager->addDockWidgetTab(ads::CenterDockWidgetArea, dw);
+    #ifdef QT_DEBUG
 	qDebug() << "DeleteContentOnClose dock widget created!" << dw << area;
-	
+    #endif
+
 	action = new QAction("Toggle [DeleteContentOnClose]", &w);
     w.menuBar()->addAction(action);
 	
 	QObject::connect(action, &QAction::triggered, [dw]() {
 		dw->toggleView(dw->isClosed());
+        #ifdef QT_DEBUG
 		qDebug() << QString("dock widget %1! contents widget %2!").arg(dw->isClosed() ? "closed" : "open", dw->widget() ? "created" : "deleted");
+#endif
     });
 	
     action = new QAction("New", &w);
@@ -81,7 +89,9 @@ int main(int argc, char *argv[])
         auto editor = new QTextEdit(QStringLiteral("lorem ipsum..."), dw);
         dw->setWidget(editor);
         auto area = dockManager->addDockWidgetTab(ads::CenterDockWidgetArea, dw);
+        #ifdef QT_DEBUG
         qDebug() << "dock widget created!" << dw << area;
+#endif
     });
 
     w.show();

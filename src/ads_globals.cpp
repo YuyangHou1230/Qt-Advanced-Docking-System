@@ -100,7 +100,7 @@ xcb_atom_t xcb_get_atom(const char *name)
 	xcb_atom_t atom = reply->atom;
 	if(atom == XCB_ATOM_NONE)
 	{
-		ADS_PRINT("Unknown Atom response from XServer: " << name);
+        //ADS_PRINT("Unknown Atom response from XServer: " << name);
 	}
 	else
 	{
@@ -153,7 +153,7 @@ xcb_get_property_reply_t* _xcb_get_props(WId window, const char *type, unsigned 
 	xcb_get_property_reply_t *reply = xcb_get_property_reply(connection, request, nullptr);
 	if(reply && reply->type != atom_type)
 	{
-		ADS_PRINT("ATOM TYPE MISMATCH (" << type <<"). Expected: " << atom_type << "  but got " << reply->type);
+        //ADS_PRINT("ATOM TYPE MISMATCH (" << type <<"). Expected: " << atom_type << "  but got " << reply->type);
 		free(reply);
 		return nullptr;
 	}
@@ -267,7 +267,7 @@ QString detectWindowManagerX11()
 	xcb_screen_t *first_screen = xcb_setup_roots_iterator (xcb_get_setup (connection)).data;
 	if(!first_screen)
 	{
-		ADS_PRINT("No screen found via XCB.");
+        //ADS_PRINT("No screen found via XCB.");
 		return "UNKNOWN";
 	}
 	// Get supporting window ()
@@ -283,14 +283,14 @@ QString detectWindowManagerX11()
 	}
 	if(sup_windows.length() == 0)
 	{
-		ADS_PRINT("Failed to get the supporting window on non EWMH comform WM.");
+        //ADS_PRINT("Failed to get the supporting window on non EWMH comform WM.");
 		return "UNKNOWN";
 	}
 	support_win = sup_windows[0];
 	QString ret = xcb_get_prop_string(support_win, "_NET_WM_NAME");
 	if(ret.length() == 0)
 	{
-		ADS_PRINT("Empty WM name occured.");
+        //ADS_PRINT("Empty WM name occured.");
 		return "UNKNOWN";
 	}
 	return ret;

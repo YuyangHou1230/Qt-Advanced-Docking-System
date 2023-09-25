@@ -6,7 +6,7 @@
 #include <qapplication.h>
 #include <windows.h>
 #include <windowsx.h>
-const int boundaryWidth = 10;
+const int boundaryWidth = 30;
 namespace ads {
 
 CustomFloatingWidget::CustomFloatingWidget(ads::CDockManager *DockManager) :
@@ -86,6 +86,7 @@ void CustomFloatingWidget::init()
     setMouseTracking(true);
     m_isMoving = false;
     m_boundType = NoBound;
+//    setMinimumSize(1000,1000);
 }
 
 bool CustomFloatingWidget::nativeEvent(const QByteArray &eventType, void *message, long *result)
@@ -120,14 +121,17 @@ bool CustomFloatingWidget::nativeEvent(const QByteArray &eventType, void *messag
 
 void CustomFloatingWidget::mousePressEvent(QMouseEvent *e)
 {
-    qDebug()<<"m_clickPos = "<<m_clickPos;
     if(!m_isMoving){//避免每次移动时也更新点击坐标与窗口坐标
         m_clickPos = e->globalPos();
+#ifdef QT_DEBUG
         qDebug()<<"m_clickPos = "<<m_clickPos;
+#endif
+        //记录当前floatingContainer 位置以及大小
         m_widgetPos.setX(this->geometry().x());
         m_widgetPos.setY(this->geometry().y());
+#ifdef QT_DEBUG
         qDebug()<<"m_widgetPos = "<<m_widgetPos;
-        //记录当前floatingContainer大小
+#endif
         m_priSize.setWidth(this->width());
         m_priSize.setHeight(this->height());
     }
@@ -139,18 +143,22 @@ void CustomFloatingWidget::mouseMoveEvent(QMouseEvent *e)
 {
     m_isMoving = true;
     QPoint movingMouse = e->globalPos();
+#ifdef QT_DEBUG
     qDebug()<<"m_clickPos = "<<m_clickPos;
     qDebug()<<"movingMouse = "<<movingMouse;
+#endif
     int deltaX = movingMouse.rx()-m_clickPos.rx();
     int deltaY = movingMouse.ry()-m_clickPos.ry();
+#ifdef QT_DEBUG
     qDebug()<<"deltaX = "<<deltaX;
     qDebug()<<"deltaY = "<<deltaY;
+#endif
     switch (m_boundType) {
     case ads::CustomFloatingWidget::NoBound:
         break;
     case ads::CustomFloatingWidget::LeftBound:
     {
-        if(deltaX > this->width()){//width不能为负
+        if(m_priSize.width()-deltaX <this->minimumWidth()){
             return QWidget::mouseMoveEvent(e);
         }
         setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height());
@@ -158,7 +166,10 @@ void CustomFloatingWidget::mouseMoveEvent(QMouseEvent *e)
         break;
     case ads::CustomFloatingWidget::LeftBottomBound:
     {
-          setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height()+deltaY);
+        if(m_priSize.width()-deltaX <this->minimumWidth()){
+            return QWidget::mouseMoveEvent(e);
+        }
+        setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height()+deltaY);
     }
         break;
     case ads::CustomFloatingWidget::BottomBound:

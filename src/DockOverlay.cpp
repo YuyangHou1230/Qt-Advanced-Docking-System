@@ -746,8 +746,10 @@ DockWidgetArea CDockOverlayCross::cursorLocation() const
 			&& i.value()->isVisible()
 			&& i.value()->geometry().contains(pos))
 		{
+            #ifdef QT_DEBUG
             qDebug()<<"pos = "<<pos<<"area = "<<i.key();
-			return i.key();
+            #endif
+            return i.key();
 		}
 	}
     return InvalidDockWidgetArea;

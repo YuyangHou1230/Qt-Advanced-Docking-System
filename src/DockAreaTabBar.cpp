@@ -227,7 +227,7 @@ void CDockAreaTabBar::removeTab(CDockWidgetTab* Tab)
 	{
 		return;
 	}
-    ADS_PRINT("CDockAreaTabBar::removeTab ");
+//    //ADS_PRINT("CDockAreaTabBar::removeTab ");
 	int NewCurrentIndex = currentIndex();
 	int RemoveIndex = d->TabsLayout->indexOf(Tab);
 	if (count() == 1)
@@ -270,7 +270,7 @@ void CDockAreaTabBar::removeTab(CDockWidgetTab* Tab)
 	d->TabsLayout->removeWidget(Tab);
 	Tab->disconnect(this);
 	Tab->removeEventFilter(this);
-    ADS_PRINT("NewCurrentIndex " << NewCurrentIndex);
+    //ADS_PRINT("NewCurrentIndex " << NewCurrentIndex);
 	if (NewCurrentIndex != d->CurrentIndex)
 	{
 		setCurrentIndex(NewCurrentIndex);
@@ -408,7 +408,7 @@ void CDockAreaTabBar::onTabWidgetMoved(const QPoint& GlobalPos)
 	{
 		d->TabsLayout->removeWidget(MovingTab);
 		d->TabsLayout->insertWidget(toIndex, MovingTab);
-        ADS_PRINT("tabMoved from " << fromIndex << " to " << toIndex);
+        //ADS_PRINT("tabMoved from " << fromIndex << " to " << toIndex);
 		Q_EMIT tabMoved(fromIndex, toIndex);
 		setCurrentIndex(toIndex);
 	}

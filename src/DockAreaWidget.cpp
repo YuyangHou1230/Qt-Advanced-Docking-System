@@ -429,7 +429,7 @@ CDockAreaWidget::CDockAreaWidget(CDockManager* DockManager, CDockContainerWidget
 //============================================================================
 CDockAreaWidget::~CDockAreaWidget()
 {
-    ADS_PRINT("~CDockAreaWidget()");
+    //ADS_PRINT("~CDockAreaWidget()");
 	delete d->ContentsLayout;
 	delete d;
 }
@@ -517,7 +517,7 @@ void CDockAreaWidget::insertDockWidget(int index, CDockWidget* DockWidget,
 //============================================================================
 void CDockAreaWidget::removeDockWidget(CDockWidget* DockWidget)
 {
-    ADS_PRINT("CDockAreaWidget::removeDockWidget");
+    //ADS_PRINT("CDockAreaWidget::removeDockWidget");
     if (!DockWidget)
     {
     	return;
@@ -548,7 +548,7 @@ void CDockAreaWidget::removeDockWidget(CDockWidget* DockWidget)
 	}
 	else if (d->ContentsLayout->isEmpty() && DockContainer->dockAreaCount() >= 1)
 	{
-        ADS_PRINT("Dock Area empty");
+        //ADS_PRINT("Dock Area empty");
 		DockContainer->removeDockArea(this);
 		this->deleteLater();
 		if(DockContainer->dockAreaCount() == 0)
@@ -624,7 +624,7 @@ void CDockAreaWidget::hideAreaWithNoVisibleContent()
 //============================================================================
 void CDockAreaWidget::onTabCloseRequested(int Index)
 {
-    ADS_PRINT("CDockAreaWidget::onTabCloseRequested " << Index);
+    //ADS_PRINT("CDockAreaWidget::onTabCloseRequested " << Index);
     auto* DockWidget = dockWidget(Index);
     if (DockWidget->features().testFlag(CDockWidget::DockWidgetDeleteOnClose) || DockWidget->features().testFlag(CDockWidget::CustomCloseHandling))
     {
@@ -803,11 +803,11 @@ CDockWidget* CDockAreaWidget::dockWidget(int Index) const
 //============================================================================
 void CDockAreaWidget::reorderDockWidget(int fromIndex, int toIndex)
 {
-    ADS_PRINT("CDockAreaWidget::reorderDockWidget");
+    //ADS_PRINT("CDockAreaWidget::reorderDockWidget");
 	if (fromIndex >= d->ContentsLayout->count() || fromIndex < 0
      || toIndex >= d->ContentsLayout->count() || toIndex < 0 || fromIndex == toIndex)
 	{
-        ADS_PRINT("Invalid index for tab movement" << fromIndex << toIndex);
+        //ADS_PRINT("Invalid index for tab movement" << fromIndex << toIndex);
 		return;
 	}
 
@@ -916,8 +916,8 @@ void CDockAreaWidget::saveState(QXmlStreamWriter& s) const
 	{
 		s.writeAttribute("Flags", QString::number(d->Flags, 16));
 	}
-    ADS_PRINT("CDockAreaWidget::saveState TabCount: " << d->ContentsLayout->count()
-            << " Current: " << Name);
+    //ADS_PRINT("CDockAreaWidget::saveState TabCount: " << d->ContentsLayout->count()
+//            << " Current: " << Name);
 	for (int i = 0; i < d->ContentsLayout->count(); ++i)
 	{
 		dockWidget(i)->saveState(s);
@@ -940,8 +940,8 @@ bool CDockAreaWidget::restoreState(CDockingStateReader& s, CDockAreaWidget*& Cre
 #endif
 
 	QString CurrentDockWidget = s.attributes().value("Current").toString();
-    ADS_PRINT("Restore NodeDockArea Tabs: " << Tabs << " Current: "
-            << CurrentDockWidget);
+    //ADS_PRINT("Restore NodeDockArea Tabs: " << Tabs << " Current: "
+//            << CurrentDockWidget);
 
     auto DockManager = Container->dockManager();
 	CDockAreaWidget* DockArea = nullptr;
@@ -987,7 +987,7 @@ bool CDockAreaWidget::restoreState(CDockingStateReader& s, CDockAreaWidget*& Cre
 			continue;
 		}
 
-        ADS_PRINT("Dock Widget found - parent " << DockWidget->parent());
+        //ADS_PRINT("Dock Widget found - parent " << DockWidget->parent());
         if (DockWidget->autoHideDockContainer())
         {
         	DockWidget->autoHideDockContainer()->cleanupAndDelete();

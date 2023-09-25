@@ -223,7 +223,7 @@ bool DockManagerPrivate::restoreContainer(int Index, CDockingStateReader& stream
 	}
 	else
 	{
-        ADS_PRINT("d->Containers[i]->restoreState ");
+        //ADS_PRINT("d->Containers[i]->restoreState ");
 		auto Container = Containers[Index];
 		if (Container->isFloating())
 		{
@@ -262,7 +262,7 @@ bool DockManagerPrivate::restoreStateFromXml(const QByteArray &state,  int versi
     {
     	return false;
     }
-    ADS_PRINT(s.attributes().value("Version"));
+    //ADS_PRINT(s.attributes().value("Version"));
     bool ok;
     int v = s.attributes().value("Version").toInt(&ok);
     if (!ok || v > CurrentVersion)
@@ -271,7 +271,7 @@ bool DockManagerPrivate::restoreStateFromXml(const QByteArray &state,  int versi
     }
     s.setFileVersion(v);
 
-    ADS_PRINT(s.attributes().value("UserVersion"));
+    //ADS_PRINT(s.attributes().value("UserVersion"));
     // Older files do not support UserVersion but we still want to load them so
     // we first test if the attribute exists
     if (!s.attributes().value("UserVersion").isEmpty())
@@ -287,7 +287,7 @@ bool DockManagerPrivate::restoreStateFromXml(const QByteArray &state,  int versi
 #ifdef ADS_DEBUG_PRINT
     int  DockContainers = s.attributes().value("Containers").toInt();
 #endif
-    ADS_PRINT(DockContainers);
+    //ADS_PRINT(DockContainers);
 
     if (CentralWidget)
     {
@@ -437,7 +437,7 @@ bool DockManagerPrivate::restoreState(const QByteArray& State, int version)
 	QByteArray state = State.startsWith("<?xml") ? State : qUncompress(State);
     if (!checkFormat(state, version))
     {
-        ADS_PRINT("checkFormat: Error checking format!!!!!!!");
+        //ADS_PRINT("checkFormat: Error checking format!!!!!!!");
     	return false;
     }
 
@@ -447,7 +447,7 @@ bool DockManagerPrivate::restoreState(const QByteArray& State, int version)
 
     if (!restoreStateFromXml(state, version))
     {
-        ADS_PRINT("restoreState: Error restoring state!!!!!!!");
+        //ADS_PRINT("restoreState: Error restoring state!!!!!!!");
     	return false;
     }
 
@@ -670,7 +670,7 @@ void CDockManager::registerFloatingWidget(CFloatingDockContainer* FloatingWidget
 {
 	d->FloatingWidgets.append(FloatingWidget);
 	Q_EMIT floatingWidgetCreated(FloatingWidget);
-    ADS_PRINT("d->FloatingWidgets.count() " << d->FloatingWidgets.count());
+    //ADS_PRINT("d->FloatingWidgets.count() " << d->FloatingWidgets.count());
 }
 
 

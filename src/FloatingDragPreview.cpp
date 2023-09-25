@@ -358,7 +358,7 @@ void CFloatingDragPreview::startFloating(const QPoint &DragStartMousePos,
 //============================================================================
 void CFloatingDragPreview::finishDragging()
 {
-	ADS_PRINT("CFloatingDragPreview::finishDragging");
+    //ADS_PRINT("CFloatingDragPreview::finishDragging");
 
 	auto DockDropArea = d->DockManager->dockAreaOverlay()->visibleDropAreaUnderCursor();
 	auto ContainerDropArea = d->DockManager->containerOverlay()->visibleDropAreaUnderCursor();
