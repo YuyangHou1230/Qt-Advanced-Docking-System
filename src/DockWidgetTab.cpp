@@ -52,6 +52,7 @@
 #include "DockManager.h"
 #include "IconProvider.h"
 #include "DockFocusController.h"
+#include "customfloatingwidget.h"
 
 
 namespace ads
@@ -320,12 +321,24 @@ bool DockWidgetTabPrivate::startFloating(eDragState DraggingState)
 	QSize Size;
 	if (DockArea->dockWidgetsCount() > 1)
 	{
-		FloatingWidget = createFloatingWidget(DockWidget, CreateContainer);
+        if (CDockManager::testConfigFlag(CDockManager::UserCustomFloatingTitle)){
+            FloatingWidget = new CustomFloatingWidget(DockWidget);
+        }
+        else{
+            FloatingWidget = new CFloatingDockContainer(DockWidget);
+        }
+//		FloatingWidget = createFloatingWidget(DockWidget, CreateContainer);
 		Size = DockWidget->size();
 	}
 	else
 	{
-		FloatingWidget = createFloatingWidget(DockArea, CreateContainer);
+        if (CDockManager::testConfigFlag(CDockManager::UserCustomFloatingTitle)){
+            FloatingWidget = new CustomFloatingWidget(DockArea);
+        }
+        else{
+            FloatingWidget = new CFloatingDockContainer(DockArea);
+        }
+//		FloatingWidget = createFloatingWidget(DockArea, CreateContainer);
 		Size = DockArea->size();
 	}
 

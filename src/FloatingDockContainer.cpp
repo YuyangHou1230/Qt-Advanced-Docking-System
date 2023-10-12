@@ -916,7 +916,10 @@ void CFloatingDockContainer::closeEvent(QCloseEvent *event)
 	// Starting from Qt version 5.12.2 this seems to work again. But
 	// now the QEvent::NonClientAreaMouseButtonPress function returns always
 	// Qt::RightButton even if the left button was pressed
-	this->hide();
+    this->hide();
+//    Sleep(5000);
+//    DockWidget->toggleView(true);
+//    this->show();
 }
 
 //============================================================================
@@ -1078,7 +1081,12 @@ void CFloatingDockContainer::onCloseFloating()
     QPoint p = d->DockManager->mapToGlobal(d->DockManager->geometry().center());
     //计算d->DockAreas个数与位置。
     d->updateDropOverlays(p);
-    d->DropContainer->dropFloatingWidgetToCenter(d->_this,p);
+    if(d->DropContainer){
+        d->DropContainer->dropFloatingWidgetToCenter(d->_this,p);
+    }else {
+//        hideAndDeleteLater();
+        hideNoDeleter();
+    }
     //隐藏Overlay视图
    d->DockManager->containerOverlay()->hideOverlay();
    d->DockManager->dockAreaOverlay()->hideOverlay();
@@ -1197,7 +1205,13 @@ void CFloatingDockContainer::hideAndDeleteLater()
 	// dock widgets that shall not be toggled hidden.
 	d->AutoHideChildren = false;
 	hide();
-	deleteLater();
+    deleteLater();
+}
+
+void CFloatingDockContainer::hideNoDeleter()
+{
+    d->AutoHideChildren = false;
+    hide();
 }
 
 //============================================================================

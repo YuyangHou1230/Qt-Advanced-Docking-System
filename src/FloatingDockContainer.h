@@ -276,7 +276,8 @@ public:
 	 * This function hides the floating bar instantely and delete it later.
 	 */
 	void hideAndDeleteLater();
-
+    //
+    void hideNoDeleter();
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
     /**
 	 * This is a function that responds to FloatingWidgetTitleBar::maximizeRequest()
