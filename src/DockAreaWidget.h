@@ -57,9 +57,13 @@ class CDockingStateReader;
 class ADS_EXPORT CDockAreaWidget : public QFrame
 {
 	Q_OBJECT
+    //*************ZXL******************
+public:
+    DockAreaWidgetPrivate* d; ///< private data (pimpl)
+    friend struct DockAreaWidgetPrivate;
+    void UserCustomModifyTabBar(int index, CDockWidget* DockWidget);
 private:
-	DockAreaWidgetPrivate* d; ///< private data (pimpl)
-	friend struct DockAreaWidgetPrivate;
+
 	friend class CDockContainerWidget;
 	friend class DockContainerWidgetPrivate;
 	friend class CDockWidgetTab;

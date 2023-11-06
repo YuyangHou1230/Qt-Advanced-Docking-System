@@ -36,6 +36,7 @@
 #include "AutoHideTab.h"
 #include "DockWidget.h"
 
+
 QT_FORWARD_DECLARE_CLASS(QXmlStreamWriter)
 
 
@@ -55,8 +56,7 @@ class CAutoHideSideBar;
 class CAutoHideTab;
 struct AutoHideTabPrivate;
 struct AutoHideDockContainerPrivate;
-
-
+struct DockAreaWidgetPrivate;
 /**
  * Container that manages a number of dock areas with single dock widgets
  * or tabyfied dock widgets in each area.
@@ -67,13 +67,15 @@ struct AutoHideDockContainerPrivate;
 class ADS_EXPORT CDockContainerWidget : public QFrame
 {
 	Q_OBJECT
+public:
+        friend struct DockAreaWidgetPrivate;
+        friend class CDockAreaTabBar;
 private:
 	DockContainerWidgetPrivate* d; ///< private data (pimpl)
     friend class DockContainerWidgetPrivate;
 	friend class CDockManager;
 	friend struct DockManagerPrivate;
 	friend class CDockAreaWidget;
-	friend struct DockAreaWidgetPrivate;
 	friend class CFloatingDockContainer;
 	friend struct FloatingDockContainerPrivate;
 	friend class CDockWidget;

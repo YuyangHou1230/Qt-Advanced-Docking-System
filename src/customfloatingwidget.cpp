@@ -85,6 +85,7 @@ void CustomFloatingWidget::init()
 
     setMouseTracking(true);
     m_isMoving = false;
+    m_isPress = false;
     m_boundType = NoBound;
 //    setMinimumSize(1000,1000);
 }
@@ -92,35 +93,12 @@ void CustomFloatingWidget::init()
 bool CustomFloatingWidget::nativeEvent(const QByteArray &eventType, void *message, long *result)
 {
     QWidget::nativeEvent(eventType, message, result);
-//    MSG *msg = static_cast<MSG*>(message);
-//    switch (msg->message)
-//    {
-//    case WM_NCHITTEST:
-//        int xPos = GET_X_LPARAM(msg->lParam) - this->frameGeometry().x();
-//        int yPos = GET_Y_LPARAM(msg->lParam) - this->frameGeometry().y();
-//        if(xPos < boundaryWidth && yPos<boundaryWidth)                    //左上角
-//            *result = HTTOPLEFT;
-//        else if(xPos>=width()-boundaryWidth&&yPos<boundaryWidth)          //右上角
-//            *result = HTTOPRIGHT;
-//        else if(xPos<boundaryWidth&&yPos>=height()-boundaryWidth)         //左下角
-//            *result = HTBOTTOMLEFT;
-//        else if(xPos>=width()-boundaryWidth&&yPos>=height()-boundaryWidth)//右下角
-//            *result = HTBOTTOMRIGHT;
-//        else if(xPos < boundaryWidth)                                     //左边
-//            *result =  HTLEFT;
-//        else if(xPos>=width()-boundaryWidth)                              //右边
-//            *result = HTRIGHT;
-//        else if(yPos<boundaryWidth)                                       //上边
-//            *result = HTTOP;
-//        else if(yPos>=height()-boundaryWidth)                             //下边
-//            *result = HTBOTTOM;
-//        return true;
-//    }
     return false;
 }
 
 void CustomFloatingWidget::mousePressEvent(QMouseEvent *e)
 {
+    qDebug()<<"PRESS m_isMoving = " <<m_isMoving;
     if(!m_isMoving){//避免每次移动时也更新点击坐标与窗口坐标
         m_clickPos = e->globalPos();
 #ifdef QT_DEBUG
@@ -134,6 +112,7 @@ void CustomFloatingWidget::mousePressEvent(QMouseEvent *e)
 #endif
         m_priSize.setWidth(this->width());
         m_priSize.setHeight(this->height());
+        m_isPress = true;
     }
     setCursorIcon(e);
     return QWidget::mousePressEvent(e);
@@ -141,53 +120,58 @@ void CustomFloatingWidget::mousePressEvent(QMouseEvent *e)
 
 void CustomFloatingWidget::mouseMoveEvent(QMouseEvent *e)
 {
-    m_isMoving = true;
-    QPoint movingMouse = e->globalPos();
-#ifdef QT_DEBUG
-    qDebug()<<"m_clickPos = "<<m_clickPos;
-    qDebug()<<"movingMouse = "<<movingMouse;
-#endif
-    int deltaX = movingMouse.rx()-m_clickPos.rx();
-    int deltaY = movingMouse.ry()-m_clickPos.ry();
-#ifdef QT_DEBUG
-    qDebug()<<"deltaX = "<<deltaX;
-    qDebug()<<"deltaY = "<<deltaY;
-#endif
-    switch (m_boundType) {
-    case ads::CustomFloatingWidget::NoBound:
-        break;
-    case ads::CustomFloatingWidget::LeftBound:
-    {
-        if(m_priSize.width()-deltaX <this->minimumWidth()){
-            return QWidget::mouseMoveEvent(e);
-        }
-        setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height());
-    }
-        break;
-    case ads::CustomFloatingWidget::LeftBottomBound:
-    {
-        if(m_priSize.width()-deltaX <this->minimumWidth()){
-            return QWidget::mouseMoveEvent(e);
-        }
-        setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height()+deltaY);
-    }
-        break;
-    case ads::CustomFloatingWidget::BottomBound:
-    {
-         resize(m_priSize.width(),m_priSize.height()+deltaY);
-    }
-        break;
-    case ads::CustomFloatingWidget::RightBottomBound:
-    {
-         resize(m_priSize.width()+deltaX,m_priSize.height()+deltaY);
-    }
-        break;
-    case ads::CustomFloatingWidget::RightBound:
-    {
-         resize(m_priSize.width()+deltaX,m_priSize.height());
-    }
-        break;
+    //确认鼠标已经按下后刷新m_isMoveing
+    if(m_isPress){
+        m_isMoving = true;
 
+        qDebug()<<" MOVE m_isMoving = " <<m_isMoving;
+        QPoint movingMouse = e->globalPos();
+    #ifdef QT_DEBUG
+        qDebug()<<"m_clickPos = "<<m_clickPos;
+        qDebug()<<"movingMouse = "<<movingMouse;
+    #endif
+        int deltaX = movingMouse.rx()-m_clickPos.rx();
+        int deltaY = movingMouse.ry()-m_clickPos.ry();
+    #ifdef QT_DEBUG
+        qDebug()<<"deltaX = "<<deltaX;
+        qDebug()<<"deltaY = "<<deltaY;
+    #endif
+        switch (m_boundType) {
+        case ads::CustomFloatingWidget::NoBound:
+            break;
+        case ads::CustomFloatingWidget::LeftBound:
+        {
+            if(m_priSize.width()-deltaX <this->minimumWidth()){
+                return QWidget::mouseMoveEvent(e);
+            }
+            setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height());
+        }
+            break;
+        case ads::CustomFloatingWidget::LeftBottomBound:
+        {
+            if(m_priSize.width()-deltaX <this->minimumWidth()){
+                return QWidget::mouseMoveEvent(e);
+            }
+            setGeometry(m_widgetPos.x()+deltaX,m_widgetPos.y(),m_priSize.width()-deltaX,m_priSize.height()+deltaY);
+        }
+            break;
+        case ads::CustomFloatingWidget::BottomBound:
+        {
+             resize(m_priSize.width(),m_priSize.height()+deltaY);
+        }
+            break;
+        case ads::CustomFloatingWidget::RightBottomBound:
+        {
+             resize(m_priSize.width()+deltaX,m_priSize.height()+deltaY);
+        }
+            break;
+        case ads::CustomFloatingWidget::RightBound:
+        {
+             resize(m_priSize.width()+deltaX,m_priSize.height());
+        }
+            break;
+
+        }
     }
     return QWidget::mouseMoveEvent(e);
 }
@@ -195,24 +179,10 @@ void CustomFloatingWidget::mouseMoveEvent(QMouseEvent *e)
 void CustomFloatingWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     m_isMoving = false;
+    m_isPress = false;
     m_boundType = NoBound;
     setCursor(Qt::ArrowCursor);
 }
 
-void CustomFloatingWidget::enterEvent(QEvent *event)
-{
-//    QEnterEvent* e = static_cast<QEnterEvent*>(event);
-//    qDebug()<<e->pos();
-//    if(e->x()<boundaryWidth || e->x()>this->width()-boundaryWidth){
-//        setCursor(Qt::SizeVerCursor);
-//    }else if(e->y()<this->height()&&e->y()>this->height()-boundaryWidth){
-//        setCursor(Qt::SizeHorCursor);
-//    }
-}
-
-void CustomFloatingWidget::leaveEvent(QEvent *event)
-{
-
-}
 
 }

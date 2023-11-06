@@ -45,7 +45,6 @@
 #include <QApplication>
 
 #include "DockManager.h"
-#include "DockAreaWidget.h"
 #include "DockWidget.h"
 #include "DockingStateReader.h"
 #include "FloatingDockContainer.h"
@@ -58,7 +57,10 @@
 #include "AutoHideDockContainer.h"
 #include "AutoHideSideBar.h"
 #include "AutoHideTab.h"
-
+#include "ElidingLabel.h"
+#include "titlebar.h"
+#include "DockAreaWidget.h"
+//#include "DockAreaWidget.cpp"
 #include <functional>
 #include <iostream>
 
@@ -525,7 +527,7 @@ void DockContainerWidgetPrivate::dropIntoCenterOfSection(
 	for (int i = 0; i < NewDockWidgets.count(); ++i)
 	{
 		CDockWidget* DockWidget = NewDockWidgets[i];
-		TargetArea->insertDockWidget(i, DockWidget, false);
+        TargetArea->insertDockWidget(i, DockWidget, false);
 		// If the floating widget contains multiple visible dock areas, then we
 		// simply pick the first visible open dock widget and make it
 		// the current one.
@@ -534,7 +536,7 @@ void DockContainerWidgetPrivate::dropIntoCenterOfSection(
 			NewCurrentIndex = i;
 		}
 	}
-	TargetArea->setCurrentIndex(NewCurrentIndex);
+    TargetArea->setCurrentIndex(NewCurrentIndex);
 	TargetArea->updateTitleBarVisibility();
 	return;
 }
@@ -546,11 +548,12 @@ void DockContainerWidgetPrivate::dropIntoSection(CFloatingDockContainer* Floatin
 {
 	// Dropping into center means all dock widgets in the dropped floating
 	// widget will become tabs of the drop area
+
 	if (CenterDockWidgetArea == area)
 	{
 		dropIntoCenterOfSection(FloatingWidget, TargetArea);
 		return;
-	}
+    }
 
 	CDockContainerWidget* FloatingContainer = FloatingWidget->dockContainer();
 	auto InsertParam = internal::dockAreaInsertParameters(area);
@@ -631,9 +634,16 @@ void DockContainerWidgetPrivate::dropIntoSection(CFloatingDockContainer* Floatin
 		TargetAreaSplitter->setSizes(Sizes);
         updateSplitterHandles(TargetAreaSplitter);
     }
-
 	addDockAreasToList(NewDockAreas);
 	_this->dumpLayout();
+    //**********ZXL**********************
+    //    auto NewDockWidgets = FloatingContainer->dockWidgets();
+    //    for(int i=0;i<NewDockWidgets.size();i++){
+    //        _this->topLevelDockArea()->UserCustomModifyTabBar(i,NewDockWidgets[i]);
+    //        TargetArea->UserCustomModifyTabBar(i,NewDockWidgets[i]);
+    //        qDebug()<<"...111";
+    //    }
+    //****************************************
 }
 
 
@@ -1652,19 +1662,21 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
             Dropped = true;
         }
     }
-
+    //***************ZXL***************************
     // mouse is over container
     if (InvalidDockWidgetArea == dropArea)
     {
         dropArea = ContainerDropArea;
         //ADS_PRINT("Container Drop Content: " << dropArea);
-        if (dropArea != InvalidDockWidgetArea)
-        {
+/*        if (CDockManager::testConfigFlag(CDockManager::UserCustomFloatingTitle) && dropArea != InvalidDockWidgetArea && DockArea) {
+            d->dropIntoSection(FloatingWidget, DockArea, dropArea);
+            Dropped = true;
+        }else*/if (dropArea != InvalidDockWidgetArea) {
             d->dropIntoContainer(FloatingWidget, dropArea);
             Dropped = true;
         }
     }
-
+    //***************ZXL***************************
     // Remove the auto hide widgets from the FloatingWidget and insert
     // them into this widget
     for (auto AutohideWidget : FloatingWidget->dockContainer()->autoHideWidgets())
@@ -1692,6 +1704,11 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
     {
         d->DockManager->notifyWidgetOrAreaRelocation(SingleDroppedDockWidget);
     }
+
+    //***********************ZXL****************************
+//    QString title = SingleDroppedDockWidget->windowTitle();
+//    setWindowTitle(title);
+    //******************************************************
     d->DockManager->notifyFloatingWidgetDrop(FloatingWidget);
 }
 

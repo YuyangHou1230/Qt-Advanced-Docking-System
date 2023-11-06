@@ -477,7 +477,7 @@ void CDockAreaWidget::addDockWidget(CDockWidget* DockWidget)
 
 
 //============================================================================
-void CDockAreaWidget::insertDockWidget(int index, CDockWidget* DockWidget,
+void CDockAreaWidget:: insertDockWidget(int index, CDockWidget* DockWidget,
 	bool Activate)
 {
 	if (index < 0 || index > d->ContentsLayout->count())
@@ -491,10 +491,10 @@ void CDockAreaWidget::insertDockWidget(int index, CDockWidget* DockWidget,
 	// Inserting the tab will change the current index which in turn will
 	// make the tab widget visible in the slot
 	d->tabBar()->blockSignals(true);
-	d->tabBar()->insertTab(index, TabWidget);
+    d->tabBar()->insertTab(index, TabWidget);
 	d->tabBar()->blockSignals(false);
 	TabWidget->setVisible(!DockWidget->isClosed());
-	d->TitleBar->autoHideTitleLabel()->setText(DockWidget->windowTitle());
+    d->TitleBar->autoHideTitleLabel()->setText(DockWidget->windowTitle());
 	DockWidget->setProperty(INDEX_PROPERTY, index);
 	d->MinSizeHint.setHeight(qMax(d->MinSizeHint.height(), DockWidget->minimumSizeHint().height()));
 	d->MinSizeHint.setWidth(qMax(d->MinSizeHint.width(), DockWidget->minimumSizeHint().width()));
@@ -1419,6 +1419,21 @@ QSize CDockAreaWidget::minimumSizeHint() const
 
 
 //============================================================================
+void CDockAreaWidget::UserCustomModifyTabBar(int index, CDockWidget *DockWidget)
+{
+    DockWidget->setDockArea(this);
+    DockWidget->tabWidget()->setDockAreaWidget(this);
+    auto TabWidget = DockWidget->tabWidget();
+    // Inserting the tab will change the current index which in turn will
+    // make the tab widget visible in the slot
+    d->tabBar()->blockSignals(true);
+    d->tabBar()->insertTab(index, TabWidget);
+    d->tabBar()->blockSignals(false);
+
+    d->TitleBar->autoHideTitleLabel()->setText(DockWidget->windowTitle());
+    updateTitleBarVisibility();
+}
+
 void CDockAreaWidget::onDockWidgetFeaturesChanged()
 {
 	if (d->TitleBar)

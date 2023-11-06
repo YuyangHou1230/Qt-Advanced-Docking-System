@@ -499,7 +499,7 @@ void FloatingDockContainerPrivate::titleMouseReleaseEvent()
 {
 	setState(DraggingInactive);
 	if (!DropContainer)
-	{
+    {
 		return;
 	}
 
@@ -530,6 +530,7 @@ void FloatingDockContainerPrivate::titleMouseReleaseEvent()
 			        QSize(Rect.width(), Rect.height() - TitleBarHeight)));
 			QApplication::processEvents();
 		}
+        //ZXL拖动鼠标事件
 		DropContainer->dropFloatingWidget(_this, QCursor::pos());
 	}
 

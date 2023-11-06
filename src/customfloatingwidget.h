@@ -53,6 +53,10 @@ private:
     QPoint m_clickPos;
     //仅记录第一次按下坐标(move也会触发press信号)
     bool m_isMoving;
+
+    //是否按下
+    bool m_isPress;
+
     //上一次的宽度
     QRect m_priSize;
 
@@ -66,8 +70,6 @@ protected:
      void mouseMoveEvent(QMouseEvent* e) override;
      void mouseReleaseEvent(QMouseEvent* e) override;
 
-     void enterEvent(QEvent *event) override;
-     void leaveEvent(QEvent *event) override;
 };
 
 
